@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        <h3>{{meta['Cities']|join(' & ')}}</h3>
+    </div>
+    <hr>
+    <div>
+        <h3>{{meta['Times']|join(' & ')}}</h3>
+    </div>
+{% endblock %}

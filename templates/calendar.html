@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% for d in data %}
+    <div class="card">
+        <h3>{{d.Name}}</h3>
+        {% for v in d.VenueName %}
+        <h4>{{v}}</h4>
+        {% endfor %}
+        <p><i>
+        {% for a in d.VenueAddress %}
+        {{a}},
+        {% endfor %}
+        {% for c in d.VenueCity %}
+        {{c}}
+        {% endfor %}
+        </p></i>
+        <code>{{d.Time}}</code>
+        <p>{{d.Description}}</p>
+    </div>
+{% endfor %}
+{% endblock %}

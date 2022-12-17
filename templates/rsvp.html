@@ -1,21 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<h2>RSVP</h2>
 <form method="post">
-    <label for="title">Title</label>
-    <br>
-    <input type="text" name="title"
-           placeholder="Message title"
-           value="{{ request.form['title'] }}"></input>
-    <br>
-
-    <label for="content">Message Content</label>
-    <br>
-    <textarea name="content"
-              placeholder="Message content"
-              rows="15"
-              cols="60"
-              >{{ request.form['content'] }}</textarea>
+    <input type="text" name="email"
+           placeholder="Enter your full name as it appears on your invitation."
+           value="{{ request.form['email'] }}"></input>
+    {% if error %}
+    <p class = "error">{{error}}</p>
+    {% endif %}
+    {% if data %}
+    <div id = "RSVP">
+        <label>Will you be attending?</label>
+        <select id = "RSVP", name = "rsvp">
+            <option value = "yes" {% if data.fields.RSVP %}selected{% endif %}>Yes!</option>
+            <option value = "no" {% if not data.fields.RSVP %}selected{% endif %}>No!</option>
+        </select>
+    </div>
+    {% endif %}
     <br>
     <button type="submit">Submit</button>
 </form>

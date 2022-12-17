@@ -1,24 +1,24 @@
 from flask import Flask, render_template, request, url_for, flash, redirect
+from pyairtable import Base, Table
+from pyairtable.formulas import match
 from datetime import datetime
-import requests
+from itertools import groupby
+
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'd16746eaacdbe452ae4e4ba03f4be835a35e1afd1c4e783d'
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+
+BASE = Base(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"))
 
 airtable = {
-    "api_key": "keyQlbV7yvwwGAadl",
-    "app_key": "appq8TUMTdg1V0Dww",
-    "meta": "Meta",
     "venues": "Venues",
     "calendar": "Events",
-    "people": "People"
+    "people": "People",
+    "qa": "QA"
 }
-
-messages = [{'title': 'Message One',
-             'content': 'Message One Content'},
-            {'title': 'Message Two',
-             'content': 'Message Two Content'}
-            ]
 
 def unique(l):
     return list(set(l))
@@ -29,56 +29,62 @@ def dt_parse(string):
         "time": datetime.strptime(string, "%Y-%m-%dT%H:%M:%S.000Z").time()
     }
 
-META = requests.get(
-    f"https://api.airtable.com/v0/{airtable['app_key']}/{airtable['meta']}", 
-    headers = {
-        f"Authorization": f"Bearer {airtable['api_key']}",
-        }
-    ).json()['records'][0]['fields']
+META = BASE.first("Meta")['fields']
 
-META['Times'] = unique(
-    [dt_parse(i)['date'] for i in META['Times']]
-    )
+META['Times'] = [dt_parse(i)['date'] for i in META['Times']]
 
 @app.route('/')
 def home():
-    
-    # dataset = []
-    # for i in dict['records']:
-    #      dict = i['fields']
-    #      dataset.append(dict)
-    
+    print(META)
     return render_template('home.html', meta=META)
 
 @app.route('/calendar')
 def calendar():
-    r = requests.get(
-        f"https://api.airtable.com/v0/{airtable['app_key']}/{airtable['calendar']}", 
-        headers = {
-            f"Authorization": f"Bearer {airtable['api_key']}",
-            }
-        ).json()
-    
     d = []
-    for i in r['records']:
+    for i in BASE.all("Events", sort = ['Time']):
         d.append(i['fields'])
     return render_template('calendar.html', meta=META, data = d)
+
+@app.route('/qa')
+def qa():
+    d = []
+    for i in BASE.all("QA", fields = ['Group', 'Question', 'Answer'], sort = ['Group', "Order"]):
+        d.append(i['fields'])
+    dt = groupby(d, lambda c: c['Group'])
+    print(dt)
+    return render_template('qa.html', meta=META, data = dt)
 
 @app.route('/travel')
 def travel():
     return render_template('travel.html', meta=META)
 
-@app.route('/rsvp', methods = ('GET', 'POST'))
-def rsvp():
-    if request.method == 'POST':
-        title = request.form['title']
-        content = request.form['content']
 
-        if not title:
-            flash('Title is required!')
-        elif not content:
-            flash('Content is required!')
+@app.route('/colophon')
+def colophon():
+    return render_template('colophon.html', meta=META)
+
+@app.route('/rsvp', methods = ['GET', 'POST'])
+def rsvp():
+    e = None
+    d = None
+    if request.method == 'POST':
+        email = request.form['email']
+        if email:
+            d = BASE.first("People", formula= match({"Email": email}))
+            if not d:
+                e = "Email not found. Did you misspell something?"
+            else:
+                if "RSVP" not in d["fields"]:
+                    d["fields"]["RSVP"] = False
+                if 'rsvp' in request.form:
+                    if request.form['rsvp'] == "yes":
+                        rsvp = True
+                        Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "People").update(d['id'], {"RSVP": rsvp})
+                    else:
+                        rsvp = False
+                        Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "People").update(d['id'], {"RSVP": rsvp})
+                    d["fields"]["RSVP"] = rsvp
         else:
-            messages.append({'title': title, 'content': content})
-            return redirect(url_for('home'))
-    return render_template('rsvp.html', meta=META)
+            e = "Enter an email address."
+    return render_template('rsvp.html', data = d, error = e, meta=META)
+

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% for d, g in data %}
+    <h2>{{d}}</h2>
+    {% for i in g %}
+        <div class="card">
+            <h3>{{i.Question}}</h3>
+            <p>{{i.Answer}}</p>
+        </div>
+    {% endfor %}
+{% endfor %}
+{% endblock %}

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>{{meta['Hosts']}}</title>
+    <title>{{meta['Names']}}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Lora:ital@0;1&display=swap" rel="stylesheet">
     <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@0;1&display=swap'); </style>
     <link rel="stylesheet" href="{{url_for('static',filename='styles.css')}}">
@@ -9,17 +9,17 @@
 <body>
     <div class = "container">
         <div class="navbar">
-            <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('rsvp') }}">RSVP</a>
-            <a href="{{ url_for('calendar') }}">Calendar</a>
-            <a href="{{ url_for('travel') }}">Travel</a>
-            <a href="{{ url_for('qa') }}">Q & A</a>
-            <a href="{{ url_for('colophon') }}">Colophon</a>
+            <a href="{{ url_for('wedding.home') }}">Home</a>
+            <a href="{{ url_for('wedding.rsvp') }}">RSVP</a>
+            <a href="{{ url_for('wedding.calendar') }}">Calendar</a>
+            <a href="{{ url_for('wedding.travel') }}">Travel</a>
+            <a href="{{ url_for('wedding.qa') }}">Q & A</a>
+            <a href="{{ url_for('wedding.colophon') }}">Colophon</a>
         </div>
         <hr>
         <div class="body">
             <div>
-                <h1 id="title">{{meta['Hosts']}}</h1>
+                <h1 id="title">{{meta['Names']}}</h1>
             </div>
             <hr>
             {% block content %} {% endblock %}

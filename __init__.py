@@ -1,13 +1,14 @@
 from flask import Flask
-from flask_login import LoginManager, UserMixin
+from flask_login import LoginManager
 from pyairtable import Base, Table
 
-from typing import Dict, Optional
+from typing import Optional
 from datetime import datetime, timezone
 from markdown import markdown
 import pytz
-from dotenv import load_dotenv
 import os
+
+from dotenv import load_dotenv
 load_dotenv()
 
 def unique(l):
@@ -23,15 +24,19 @@ AT = {
     "parties": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Parties"),
     "qa": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "QA"),
     "meta": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Meta"),
-    "artists": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Artists")
+    "artists": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Artists"),
+    "accommodations": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Accommodations")
 }
 
-META = AT["meta"].first(fields=['Times', 'Names', 'Cities', 'Colophon'])['fields']
+META = AT["meta"].first(fields=['Published', 'Times', 'Names', 'Cities', 'Colophon', 'Registry'])['fields']
 META['UniqueDates'] = unique([dt_parse(datetime).date() for datetime in META['Times']])
 # META['MinDate'] = min(META['UniqueDates'])
 # META['MaxDate'] = max(META['UniqueDates'])
 META['ShortNames'] = [name.split()[0] for name in META['Names']]
 META['Colophon'] = markdown(META['Colophon'])
+META['Path'] = 'wedding.home'
+if "Published" not in META:
+    META["Published"] = False
 
 
 BASE = Base(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"))

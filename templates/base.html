@@ -12,9 +12,11 @@
         src="https://code.jquery.com/jquery-3.6.3.slim.min.js"
 	    integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo="
 		crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
 </head>
 <body>
-    <section class="section">
+    <section id="header" class="section">
         <div class="container">
             <div class="columns">
                 <div class = "column is-8 is-offset-2">
@@ -25,6 +27,7 @@
                             </p>
                         </div>
                     </div>
+                    {% if meta["Published"] %}
                     <nav class="navbar block">
                         <div class="navbar-brand">
                             <a role = "button" class="navbar-burger" data-target="navMenu">
@@ -36,22 +39,48 @@
                         <div class="navbar-menu" id="navMenu">
                             <a class="navbar-item" href="{{ url_for('wedding.home') }}">Home</a>
                             <a class="navbar-item" href="{{ url_for('wedding.rsvp') }}">RSVP</a>
-                            <a class="navbar-item" href="{{ url_for('wedding.calendar') }}">Itinerary</a>
-                            <a class="navbar-item" href="{{ url_for('wedding.travel') }}">Travel</a>
-                            <a class="navbar-item" href="/">Registry</a>
+                            <a class="navbar-item" href="{{ url_for('wedding.itinerary') }}">Itinerary</a>
+                            <div class="navbar-item has-dropdown is-hoverable">
+                                <a class="navbar-link">Travel</a>
+                                <div class="navbar-dropdown">
+                                    <a class="navbar-item" href="{{ url_for('wedding.accommodations') }}">Accommodations</a>
+                                    <a class="navbar-item" href="{{ url_for('wedding.getting_around') }}">Getting Around</a>
+                                    <a class="navbar-item" href="{{ url_for('wedding.things_to_do') }}">Things to Do</a>
+                                </div>
+                            </div>
+                            <a class="navbar-item" href="{{ meta['Registry'] }}">Registry</a>
                             <a class="navbar-item" href="{{ url_for('wedding.qa') }}">Q & A</a>
                             <a class="navbar-item" href="{{ url_for('wedding.colophon') }}">Colophon</a>
                         </div>
                     </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+    {% if meta["Published"] %}
+    <section id="body" class="section">
+        <div class="container">
+            <div class="columns">
+                <div class = "column is-8 is-offset-2">
                     {% block content %} {% endblock %}
-        
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="footer" class="section">
+        <div class="container">
+            <div class="columns">
+                <div class = "column is-8 is-offset-2">
                     {% if current_user.is_authenticated %}
                     <footer class="footer is-transparent">
                         <div class="columns">
-                            <div class="column is-6 is-offset-3">
+                            <div class="column is-4 is-offset-4">
                                 <div class="card">
                                     <div class="card-content">
-                                        Viewing as <strong>{{current_user.name}}</strong>.
+                                        <p class="block">Viewing as <strong>{{current_user.name}}</strong>.</p>
+                                        <button class="button is-small" onclick="window.location.href='{{url_for("auth.login")}}';" type="button">Change User</button>
+                                        <button class="button is-small" onclick="window.location.href='{{url_for("auth.logout")}}';" type="button">Logout</button>
                                     </div>
                                 </div>
                             </div>
@@ -62,6 +91,28 @@
             </div>
         </div>
     </section>
+    {% else %}
+    <section id="body" class="section">
+        <div class="container">
+            <div class="columns">
+                <div class = "column is-8 is-offset-2">
+                    <div class="has-text-centered">
+                        <div id="names-hero" class="hero is-large">
+                            <div class="hero-body">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <p class="title">Under construction!</p>
+                                        <p class="subtitle">Check back soon.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 </body>
 <script>
     $(document).ready(function() {
@@ -71,22 +122,12 @@
         // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
         $(".navbar-burger").toggleClass("is-active");
         $(".navbar-menu").toggleClass("is-active");
-
         });
 
     // Hide login modal on click of close button
     $(".close-modal").click(function() {
         $(".rsvp").toggleClass("is-active");
-    })
-
-    // Hide login modal on click outside.
-    $("body").click(function(e) {
-        if($(e.target).is(".modal-background")) {
-            $(".rsvp").toggleClass("is-active");
-        }
-    })
-    
+        });
     });
-    
 </script>
 </html>

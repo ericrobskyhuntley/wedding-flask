@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if not current_user.is_authenticated %}
-    {% include 'login.html' %}
-{% endif %}
 {% for date, events in data %}
     <div class="card block">
         <div class="card-header">
@@ -11,6 +8,7 @@
         </div>
         <div class="card-content">
             {% for event in events %}
+            <div id="{{event.Slug}}-map" class="block"></div>
             <div class="columns">
                 <div class="column is-4">
                     <code>{{event.StartTime.strftime('%I:%M %p')}} - {{event.EndTime.strftime('%I:%M %p')}}</code>
@@ -50,5 +48,19 @@
             {% endfor %}
         </div>
     </div>
+{% endfor %}
+{% for date, events in data %}
+    {% for event in events %}
+    {{event}}
+    <script>
+        var map = new maplibregl.Map({
+            container: '{{ event.Slug }}'.concat('-map'),
+            style:
+                'https://api.maptiler.com/maps/streets/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL',
+            zoom: 15,
+            center: [-122.447303, 37.753574]
+        });
+    </script>
+    {% endfor %}
 {% endfor %}
 {% endblock %}

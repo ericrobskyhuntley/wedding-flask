@@ -14,15 +14,25 @@
 		crossorigin="anonymous"></script>
     <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <style>
+        {% if not meta["Published"] %}
+        html{
+            background:#A60A3D;
+        }
+        {% endif %}
+    </style>
 </head>
 <body>
+    {% if not meta["Published"] %}
+    <div id="bg" style="background: url('{{meta["UnderConstructionImage"][0].url}}') no-repeat center center; background-size: cover;"></div>
+    {% endif %}
     <section id="header" class="section">
         <div class="container">
             <div class="columns">
                 <div class = "column is-8 is-offset-2">
                     <div class="hero is-small">
                         <div class="hero-body">
-                            <p class="title has-text-centered">
+                            <p class="title has-text-centered" {% if not meta["Published"] %}style="color:white;"{% endif %}>
                                 <a href="{{ url_for('wedding.home')}}">{{meta['ShortNames'] | join(" & ")}}</a>
                             </p>
                         </div>
@@ -97,7 +107,7 @@
             <div class="columns">
                 <div class = "column is-8 is-offset-2">
                     <div class="has-text-centered">
-                        <div id="names-hero" class="hero is-large">
+                        <div id="construction-hero" class="hero is-large">
                             <div class="hero-body">
                                 <div class="card">
                                     <div class="card-content">

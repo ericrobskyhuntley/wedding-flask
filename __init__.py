@@ -28,7 +28,7 @@ AT = {
     "accommodations": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Accommodations")
 }
 
-META = AT["meta"].first(fields=['Published', 'Times', 'Names', 'Cities', 'Colophon', 'Registry'])['fields']
+META = AT["meta"].first(fields=['Published', 'Times', 'Names', 'Cities', 'Colophon', 'Registry', 'UnderConstructionImage'])['fields']
 META['UniqueDates'] = unique([dt_parse(datetime).date() for datetime in META['Times']])
 # META['MinDate'] = min(META['UniqueDates'])
 # META['MaxDate'] = max(META['UniqueDates'])
@@ -38,6 +38,7 @@ META['Path'] = 'wedding.home'
 if "Published" not in META:
     META["Published"] = False
 
+print(META)
 
 BASE = Base(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"))
 

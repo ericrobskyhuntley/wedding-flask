@@ -38,8 +38,6 @@ META['Path'] = 'wedding.home'
 if "Published" not in META:
     META["Published"] = False
 
-print(META)
-
 BASE = Base(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"))
 
 def create_app():

@@ -86,7 +86,6 @@ def accommodations():
     if META["Published"]:
         META["Path"] = request.path
         data = AT["accommodations"].first().get("fields")
-        print(data)
         return render_template('accommodations.html', data = data, meta=META)
     else:
         return redirect(url_for('wedding.home'))

@@ -1,11 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div>
-        <h3>{{meta['Cities']|join(' & ')}}</h3>
+{% if meta['Names'] %}
+<div class="has-text-centered">
+    <div id="names-hero" class="hero is-small">
+        <div class="hero-body">
+            <div class="card">
+                <div class="card-content">
+                    {% for name in meta['Names'] %}
+                    <p class="title">{{name}}</p>
+                    {% if not loop.last %}
+                    <p class="subtitle">&</p>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
-    <hr>
-    <div>
-        <h3>{{meta['Times']|join(' & ')}}</h3>
+    {% endif %}
+    {% if meta['Cities'] %}
+    <div id="places-hero" class="hero is-small">
+        <div class="hero-body">
+            <div class="card">
+                <div class="card-content">
+                    {% for city in meta['Cities'] %}
+                    <p class="title">{{city}}</p>
+                    {% if not loop.last %}
+                    <p class="subtitle">&</p>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
+    {% endif %}
+    {% if meta['UniqueDates'] %}
+    <div id="dates-hero" class="hero is-small">
+        <div class="hero-body">
+            <div class="card">
+                <div class="card-content">
+                    {% for d in meta['UniqueDates'] %}
+                    <p class="title">{{d.strftime('%B %d, %Y')}}</p>
+                    {% if not loop.last %}
+                    <p class="subtitle">-</p>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

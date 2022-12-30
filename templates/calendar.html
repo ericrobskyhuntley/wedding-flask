@@ -1,22 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% for d in data %}
-    <div class="card">
-        <h3>{{d.Name}}</h3>
-        {% for v in d.VenueName %}
-        <h4>{{v}}</h4>
-        {% endfor %}
-        <p><i>
-        {% for a in d.VenueAddress %}
-        {{a}},
-        {% endfor %}
-        {% for c in d.VenueCity %}
-        {{c}}
-        {% endfor %}
-        </p></i>
-        <code>{{d.Time}}</code>
-        <p>{{d.Description}}</p>
+{% if not current_user.is_authenticated %}
+    {% include 'login.html' %}
+{% endif %}
+{% for date, events in data %}
+    <div class="card block">
+        <div class="card-header">
+            <p class="card-header-title">{{date.strftime('%B %d, %Y')}}</p>
+        </div>
+        <div class="card-content">
+            {% for event in events %}
+            <div class="columns">
+                <div class="column is-4">
+                    <code>{{event.StartTime.strftime('%I:%M %p')}} - {{event.EndTime.strftime('%I:%M %p')}}</code>
+                </div>
+                <div class="column is-8">
+                    <div class="card block">
+                        <div class="card-header">
+                            <p class="card-header-title">
+                                {{event.Name}}
+                            </p>
+                        </div>
+                        <div class="card-content">
+                            {% for v in event.VenueURL %}
+                            <h4><a href="{{v}}">{{event.VenueName[0]}}</a></h4>
+                            {% endfor %}
+                            <p><i>
+                            {% for a in event.VenueAddress %}
+                            {{a}}
+                            {% endfor %}
+                            <br>
+                            {% for c in event.VenueCity %}
+                            {{c}}
+                            {% endfor %}
+                            </i>
+                            <hr>
+                            <p>{{event.Description}}</p>
+                            {% if event.Artists %}
+                            <hr>
+                            {% for a in event.Artists %}
+                            {{a.Name}}
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 {% endfor %}
 {% endblock %}

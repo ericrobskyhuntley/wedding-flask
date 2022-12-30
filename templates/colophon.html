@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {{meta.Colophon}}
+<div class="block">
+    {{meta.Colophon|safe}}
+</div>
 {% endblock %}

@@ -1,0 +1,25 @@
+
+<div class="modal rsvp is-active">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="card">
+            <div class="card-content">
+                <form id="RSVPModal" method="POST" action="{{ url_for('auth.login_post')}}">
+                    <div class="field">
+                        <label class="label">Your Name</label>
+                        <div class="control">
+                            <input class="input" type="text" name="name"
+                                placeholder="Enter your name as it appears on your invitation."
+                                value="{{ request.form['name'] }}"></input>
+                        </div>
+                        {% if error %}
+                        <p class = "error">{{error}}</p>
+                        {% endif %}
+                    </div>
+                    <button class="button close-modal is-small" type="submit">Submit</button>
+                    <button class="button close-modal is-small is-outlined" type="button">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

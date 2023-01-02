@@ -30,42 +30,35 @@ AT = {
 
 META = AT["meta"].first(fields=['Published', 'Times', 'Names', 'Cities', 'Colophon', 'Registry', 'UnderConstructionImage'])['fields']
 META['UniqueDates'] = unique([dt_parse(datetime).date() for datetime in META['Times']])
-# META['MinDate'] = min(META['UniqueDates'])
-# META['MaxDate'] = max(META['UniqueDates'])
 META['ShortNames'] = [name.split()[0] for name in META['Names']]
 META['Colophon'] = markdown(META['Colophon'])
 META['Path'] = 'wedding.home'
+
 if "Published" not in META:
     META["Published"] = False
-
-BASE = Base(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"))
-
-def create_app():
-    app = Flask(__name__)
-
-    from .wedding import wedding as wedding_bp
-    app.register_blueprint(wedding_bp)
-
-    from .auth import auth as auth_bp
-    app.register_blueprint(auth_bp)
-
-    app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
-    app.config["MAIL_PORT"] = os.getenv("MAIL_PORT")
-    app.config["MAIL_USE_SSL"] = os.getenv("MAIL_USE_SSL")
-    app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
-    app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-
-    login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
-    login_manager.init_app(app)
     
-    from .models import User
-    @login_manager.user_loader
-    def load_user(user_id) -> Optional[User]:
-        return User.get(user_id)
+app = Flask(__name__)
 
-    return app
+from wedding import wedding as wedding_bp
+app.register_blueprint(wedding_bp)
 
+from auth import auth as auth_bp
+app.register_blueprint(auth_bp)
+
+app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
+app.config["MAIL_PORT"] = os.getenv("MAIL_PORT")
+app.config["MAIL_USE_SSL"] = os.getenv("MAIL_USE_SSL")
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.init_app(app)
+
+from models import User
+@login_manager.user_loader
+def load_user(user_id) -> Optional[User]:
+    return User.get(user_id)
 
 

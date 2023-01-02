@@ -5,7 +5,7 @@ from flask_login import current_user
 from slugify import slugify
 from pyairtable.formulas import match, FIELD, FIND, STR_VALUE, OR, EQUAL
 from itertools import groupby
-from . import AT, META, dt_parse
+from app import AT, META, dt_parse
 
 # from utils import email_confirm
 

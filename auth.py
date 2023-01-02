@@ -1,8 +1,8 @@
 from flask import Blueprint, request, redirect, url_for, render_template
 from flask_login import login_user, logout_user, login_required
 from pyairtable.formulas import match
-from . import AT, META
-from .models import User
+from app import AT, META
+from models import User
 
 auth = Blueprint('auth', __name__)
 

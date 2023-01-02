@@ -74,3 +74,16 @@ hr {
     -webkit-filter: blur(3px) grayscale(100%);
     filter: blur(3px) grayscale(100%);
   }
+
+.hero .card {
+    background-color: transparent;
+    box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.2),0 0 0 1px rgba(10,10,10,.02)
+}
+
+.hero .card .title {
+    color:white;
+}
+
+.hero .card .subtitle {
+    color:white;
+}

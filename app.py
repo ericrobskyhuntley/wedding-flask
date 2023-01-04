@@ -36,6 +36,8 @@ META['Path'] = 'wedding.home'
 
 if "Published" not in META:
     META["Published"] = False
+
+# META["Published"] = True
     
 app = Flask(__name__)
 

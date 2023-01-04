@@ -10,23 +10,23 @@
         </header>
         {% endif %}
         <div class="card-content">
-            <div id = {{p.rsvp_id}} class = "field question">
+            <div id = "{{p.weddingrsvp_id}}" class = "field question">
                 {% if p.Name %}
-                <label class="label">Will this person be attending?</label>
+                <label class="label">Will this person be attending the wedding?</label>
                 {% else %}
                 <label class="label">Will you be bringing a guest?</label>
                 {% endif %}
                 <div class="control">
                     <div class="select">
-                        <select name = {{p.rsvp_id}} onchange="this.form.submit()">
-                            <option {% if not p.RSVP %}selected{% endif %}></option>
-                            <option value = "y" {% if p.RSVP == "Yes" %}selected{% endif %}>Yes</option>
-                            <option value = "n" {% if p.RSVP == "No" %}selected{% endif %}>No</option>
+                        <select name = "{{p.weddingrsvp_id}}" onchange="this.form.submit()">
+                            <option value = "None" {% if not p.WeddingRSVP %}selected{% endif %}></option>
+                            <option value = "Yes" {% if p.WeddingRSVP == "Yes" %}selected{% endif %}>Yes</option>
+                            <option value = "No" {% if p.WeddingRSVP == "No" %}selected{% endif %}>No</option>
                         </select>
                     </div>
                 </div>
             </div>
-            {% if p.RSVP == "Yes" %}
+            {% if p.WeddingRSVP == "Yes" %}
             {% if not p.Name %}
             <div id="{{p.name_id}}" class = "field question">
                 <label class="label">What is your guest's name?</label>
@@ -36,14 +36,38 @@
                 </div>
             </div> 
             {% endif %}
+            <div id = "{{p.welcomersvp_id}}" class = "field question">
+                <label class="label">Will this person be attending our welcome event?</label>
+                <div class="control">
+                    <div class="select">
+                        <select name = "{{p.welcomersvp_id}}"">
+                            <option value = "None" {% if not p.WelcomeRSVP %}selected{% endif %}></option>
+                            <option value = "Yes" {% if p.WelcomeRSVP == "Yes" %}selected{% endif %}>Yes</option>
+                            <option value = "No" {% if p.WelcomeRSVP == "No" %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div id = "{{p.bagelsrsvp_id}}" class = "field question">
+                <label class="label">Will this person be attending our bagel brunch on Sunday?</label>
+                <div class="control">
+                    <div class="select">
+                        <select name = "{{p.bagelsrsvp_id}}"">
+                            <option value = "None" {% if not p.BagelsRSVP %}selected{% endif %}></option>
+                            <option value = "Yes" {% if p.BagelsRSVP == "Yes" %}selected{% endif %}>Yes</option>
+                            <option value = "No" {% if p.BagelsRSVP == "No" %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <div id="{{p.meal_id}}" class = "field question">
                 <label class="label">Would this person prefer a vegetarian or vegan meal?</label>
                 <div class="control">
                     <div class="select">
                         <select name="{{p.meal_id}}"">
-                            <option {% if not p.Meal %}selected{% endif %}></option>
-                            <option value = "veggie" {% if p.Meal[0] == "Vegetarian" %}selected{% endif %}>Vegetarian</option>
-                            <option value = "vegan" {% if p.Meal[0] == "Vegan" %}selected{% endif %}>Vegan</option>
+                            <option value = "None"  {% if not p.Meal %}selected{% endif %}></option>
+                            <option value = "Vegetarian" {% if p.Meal == "Vegetarian" %}selected{% endif %}>Vegetarian</option>
+                            <option value = "Vegan" {% if p.Meal == "Vegan" %}selected{% endif %}>Vegan</option>
                         </select>
                     </div>
                 </div>
@@ -58,10 +82,10 @@
                 </div>
             </div>
             {% endif %}
-            <div id="{{p.ae_id}}" class = "field question">
+            <div id="{{p.anythingelse_id}}" class = "field question">
                 <label class="label">Anything else we should know?</label>
                 <div class="control">
-                    <input class="input" type="text" name="{{p.ae_id}}"
+                    <input class="input" type="text" name="{{p.anythingelse_id}}"
                             value="{{ p.AnythingElse }}"></input>
                 </div>
             </div>
@@ -69,10 +93,12 @@
         </div>
     </div>
     {% endfor %}
+    {% if attending %}
     <div class="field">
         <div class="control">
-            <button class="button" type="submit">Submit</button>
+            <button class="button is-large is-fullwidth is-primary" type="submit">Submit</button>
         </div>
     </div>
+    {% endif %}
 </form>
 {% endblock %}

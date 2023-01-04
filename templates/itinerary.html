@@ -38,7 +38,7 @@
                             {% if event.Artists %}
                             <hr>
                             {% for a in event.Artists %}
-                            {{a.Name}}
+                            {{a.Role}} by <a href="{{a.Website}}">{{a.Name}}</a>.
                             {% endfor %}
                             {% endif %}
                         </div>

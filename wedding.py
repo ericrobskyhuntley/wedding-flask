@@ -31,11 +31,21 @@ def home():
 def process_events(events):
     d = []
     for e in events:
-        e['fields']['StartTime'] = dt_parse(e['fields']['StartTime'])
-        e['fields']['EndTime'] = dt_parse(e['fields']['EndTime'])
-        e['fields']['Slug'] = slugify(e['fields']['Name'])
-        d.append(e['fields'])
-    return d
+        e = e['fields']
+        e['StartTime'] = dt_parse(e['StartTime'])
+        e['EndTime'] = dt_parse(e['EndTime'])
+        e['Slug'] = slugify(e['Name'])
+        if "Artists" in e:
+            artists = []
+            for a in e["Artists"]:
+                artist = AT["artists"].get(a)['fields']
+                if 'Status' in artist:
+                    if artist['Status'] == 'Confirmed':
+                        artists.append(artist)
+            e['Artists'] = artists
+        d.append(e)
+    print(d)
+    return groupby(d, lambda x: x['StartTime'].date())
 
 def compose_formula(list, field):
     f = []
@@ -55,11 +65,10 @@ def itinerary():
             else:
                 formula = EQUAL(0, FIELD("LimitedInviteNames"))
             events = AT["events"].all(formula = formula, sort = ["StartTime"])
-            d = process_events(events)
             return render_template(
                 'itinerary.html', 
                 meta=META, 
-                data=groupby(d, lambda x: x['StartTime'].date())
+                data=process_events(events)
                 )
         else:
             return redirect(url_for('auth.login'))
@@ -117,86 +126,78 @@ def colophon():
     else:
         return redirect(url_for('wedding.home'))
 
+def check_none(field, values, values_dict, none_val = None):
+    field_lc = field.lower()
+    field_id = "_".join([field_lc, "id"])
+    values_dict[field_id] = "_".join([field_lc, values_dict["id"]])
+    if field not in values:
+        values_dict[field] = none_val
+    else:
+        values_dict[field] = values[field]
+    return values_dict
+
+def check_form(field, values, request):
+    field_lc = field.lower()
+    field_id = "_".join([field_lc, "id"])
+    if field_id in values:
+        if values[field_id] in request.form:
+            if request.form[values[field_id]] == "None":
+                values[field] = None
+            else:
+                values[field] = request.form[values[field_id]]
+    return values
+
 @wedding.route('/rsvp', methods = ['GET', 'POST'])
 def rsvp():
     if META["Published"]:
         META['Path'] = request.path
         e = None
+        a = []
+        attending = False
         if not current_user.is_authenticated:
             return redirect(url_for('auth.login'))
         else:
-            party_id = AT["people"].first(
-                formula = match(
-                    {"Name": current_user.name}
-                    ), 
-                fields=["Party"]
-                )["fields"]["Party"][0]
-            guest_list = []
+            party_id = AT["people"].get(current_user.id)["fields"]["Party"][0]
+            people = []
             party = AT["parties"].get(party_id)["fields"]
-            for person in party['People']:
+            for p in party['People']:
                 values = {}
-                g = AT["people"].get(person)
-                values["id"] = g["id"]
-                g = g["fields"]
-                if "Name" not in g:
-                    values["Name"] = ""
-                else:
-                    values["Name"] = g["Name"]
-                if "RSVP" not in g:
-                    values["RSVP"] = None
-                else:
-                    values["RSVP"] = g["RSVP"]
-                if "Email" not in g:
-                    values["Email"] = None
-                else:
-                    values["Email"] = g["Email"]
-                if "Meal" not in g:
-                    values["Meal"] = None
-                else:
-                    values["Meal"] = g["Meal"]
+                person = AT["people"].get(p)
+                values["id"] = person["id"]
+                person = person["fields"]
 
-                if "AnythingElse" not in g:
-                    values["AnythingElse"] = ""
-                else:
-                    values["AnythingElse"] = g["AnythingElse"]
-                
-                values["name_id"] = "-".join(["name", values["id"]])
-                values["rsvp_id"] = "-".join(["rsvp", values["id"]])
-                values["email_id"] = "-".join(["email", values["id"]])
-                values["meal_id"] = "-".join(["meal", values["id"]])
-                values["ae_id"] = "-".join(["ae", values["id"]])
-            
+                text_fields = ["Name", "AnythingElse"]
+                choice_fields = ["WeddingRSVP", "WelcomeRSVP", "BagelsRSVP", "Email", "Meal"]
+
+                for field in text_fields:
+                    values = check_none(field, person, values, none_val = "")
+
+                for field in choice_fields:
+                    values = check_none(field, person, values)
+
                 if request.method == 'POST':
-                    if values["rsvp_id"] in request.form:
-                        if request.form[values["rsvp_id"]] == "y":
-                            values["RSVP"] = "Yes"
-                        elif request.form[values["rsvp_id"]] == "n":
-                            values["RSVP"] = "No"
-                        else:
-                            values["RSVP"] = None
-                    if values["name_id"] in request.form:
-                        values["Name"] = request.form[values["name_id"]]
-                    if values["email_id"] in request.form:
-                        values["Email"] = request.form[values["email_id"]]
-                    if values["meal_id"] in request.form:
-                        if request.form[values["meal_id"]] == "veggie":
-                            values["Meal"] = ["Vegetarian"]
-                        else:
-                            values["Meal"] = ["Vegan"]
-                    if values["ae_id"] in request.form:
-                        values["AnythingElse"] = request.form[values["ae_id"]]
+                    for field in text_fields + choice_fields:
+                        values = check_form(field, values, request)
                     AT["people"].update(values["id"], {
                         "Name": values["Name"],
-                        "RSVP": values["RSVP"],
+                        "WeddingRSVP": values["WeddingRSVP"],
+                        "WelcomeRSVP": values["WelcomeRSVP"],
+                        "BagelsRSVP": values["BagelsRSVP"],
                         "Email": values["Email"],
                         "Meal": values["Meal"],
                         "AnythingElse": values["AnythingElse"]
                         })
                     AT["parties"].update(party_id, {
-                    "Reply": True
+                        "Reply": True
                     })
-                guest_list.append(values)
-            return render_template('rsvp.html', party = party, people = guest_list, error = e, meta=META)
+                people.append(values)
+                if values["WeddingRSVP"] == "Yes":
+                    a.append(True)
+                else:
+                    a.append(False)
+            if(any(a)):
+                attending = True
+            return render_template('rsvp.html', party = party, people = people, attending = attending, error = e, meta=META)
     else:
         return redirect(url_for('wedding.home'))
     

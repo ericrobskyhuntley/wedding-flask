@@ -22,25 +22,32 @@
                         </div>
                         <div class="card-content">
                             {% if event.VenueURL %}
-                            <h4><a href="{{event.VenueURL}}">{{event.VenueName[0]}}</a></h4>
+                            <h4><a href="{{event.VenueURL[0]}}">{{event.VenueName[0]}}</a></h4>
                             {% else %}
                             <h4>{{event.VenueName[0]}}</h4>
                             {% endif %}
                             <p><i>
+                            {% if event.VenueAddress %}
                             {% for a in event.VenueAddress %}
                             {{a}}
                             {% endfor %}
+                            {% endif %}
                             <br>
-                            {% for c in event.VenueCity %}
-                            {{c}}
-                            {% endfor %}
+                            {% if event.VenueCity %}
+                            {{event.VenueCity[0]}}{% if event.VenueState %}, {{event.VenueState[0]}}{% endif %}
+                            {% endif %}
                             </i>
+                            {% if event.Description %}
                             <hr>
                             <p>{{event.Description|safe}}</p>
+                            {% endif %}
                             {% if event.Artists %}
                             <hr>
-                            {% for a in event.Artists %}
-                            {{a.Role}} by <a href="{{a.Website}}">{{a.Name}}</a>.
+                            {% for role in event.Artists.keys() %}
+                                {{role}} by 
+                                {% if event.Artists[role]|length==1%}{% for artist in event.Artists[role] %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>.{% endfor %}{% endif %}
+                                {% if event.Artists[role]|length==2%}{% for artist in event.Artists[role] %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>{% if not loop.last %} and {% else %}.{%endif%}{% endfor %}{% endif %}
+                                {% if event.Artists[role]|length>2%}{% for artist in event.Artists[role] %}{% if loop.last %} and {% endif %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>{% if not loop.last %}, {% else %}.{%endif%}{% endfor %}{% endif %}
                             {% endfor %}
                             {% endif %}
                         </div>

@@ -6,6 +6,7 @@ from markdown import markdown
 from slugify import slugify
 from pyairtable.formulas import match, FIELD, FIND, STR_VALUE, OR, EQUAL
 from itertools import groupby
+from operator import itemgetter
 from app import AT, META, dt_parse
 
 # from utils import email_confirm
@@ -43,7 +44,11 @@ def process_events(events):
                 if 'Status' in artist:
                     if artist['Status'] == 'Confirmed':
                         artists.append(artist)
-            e['Artists'] = artists
+            artists = sorted(artists, key = itemgetter('Role'))
+            a_dict = {}
+            for role, artist in groupby(artists, key = itemgetter('Role')):
+                a_dict[role] = list(artist)
+            e['Artists'] = a_dict
         d.append(e)
     return groupby(d, lambda x: x['StartTime'].date())
 

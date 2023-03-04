@@ -24,7 +24,7 @@ AT = {
     "parties": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Parties"),
     "qa": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "QA"),
     "meta": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Meta"),
-    "artists": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Artists"),
+    "vendors": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Vendors"),
     "accommodations": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Accommodations")
 }
 
@@ -47,11 +47,11 @@ app.register_blueprint(wedding_bp)
 from auth import auth as auth_bp
 app.register_blueprint(auth_bp)
 
-app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
-app.config["MAIL_PORT"] = os.getenv("MAIL_PORT")
-app.config["MAIL_USE_SSL"] = os.getenv("MAIL_USE_SSL")
-app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
-app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+# app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
+# app.config["MAIL_PORT"] = os.getenv("MAIL_PORT")
+# app.config["MAIL_USE_SSL"] = os.getenv("MAIL_USE_SSL")
+# app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+# app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 login_manager = LoginManager()

@@ -1,16 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% for d in data %}
 <div class="card block">
-    <div class="card-image">
-        <figure class="image is-4by3">
-            <img src="{{data.Photo[0].thumbnails.large.url}}" alt="Placeholder image">
-        </figure>
-    </div>
     <div class="card-header">
         <p class="card-header-title">
-            <a href="{{data.Website[0]}}">
-                {{data.Name[0]}}
+            <a href="{{d.Website[0]}}">
+                {{d.Name[0]}}
             </a>
         </p>
     </div>
@@ -18,19 +14,20 @@
         <div class="columns">
             <div class="column is-4">
                 <div class="wedding-block block">
-                    Ask for the {{data.BlockName}} block.
+                    Ask for the {{d.BlockName}} block.
                 </div>
                 <div class="phone block">
-                    <code>{{data.Phone}}</code>
+                    <code>{{d.Phone}}</code>
                 </div>
                 <div class="price block">
-                    <code>${{data.Price}} / night</code> 
+                    <code>${{d.Price}} / night</code> 
                 </div>
             </div>
             <div class="column is-8">
-                {{data.Description}}
+                {{d.Description|safe}}
             </div>
         </div>
     </div>
 </div>
+{% endfor %}
 {% endblock %}

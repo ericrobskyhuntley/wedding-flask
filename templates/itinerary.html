@@ -21,9 +21,11 @@
                             </p>
                         </div>
                         <div class="card-content">
-                            {% for v in event.VenueURL %}
-                            <h4><a href="{{v}}">{{event.VenueName[0]}}</a></h4>
-                            {% endfor %}
+                            {% if event.VenueURL %}
+                            <h4><a href="{{event.VenueURL}}">{{event.VenueName[0]}}</a></h4>
+                            {% else %}
+                            <h4>{{event.VenueName[0]}}</h4>
+                            {% endif %}
                             <p><i>
                             {% for a in event.VenueAddress %}
                             {{a}}
@@ -34,7 +36,7 @@
                             {% endfor %}
                             </i>
                             <hr>
-                            <p>{{event.Description}}</p>
+                            <p>{{event.Description|safe}}</p>
                             {% if event.Artists %}
                             <hr>
                             {% for a in event.Artists %}

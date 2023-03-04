@@ -1,23 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% for d, g in data %}
+{% for d in data %}
     <div class="card block">
-        <div class="card-header">
-            <h1 class="card-header-title">{{d}}</h1>
-        </div>
-        <div class="card-content">
-            {% for i in g %}
-                <div class="card block">
-                    <header class="card-header">
-                        <h3 class="card-header-title">{{i.Question}}</h3>
-                    </header>
-                    <header class="card-content">
-                        <p>{{i.Answer|safe}}</p>
-                    </header>
-                </div>
-            {% endfor %}
-        </div>
+        <header class="card-header">
+            <h3 class="card-header-title">{{d.Question}}</h3>
+        </header>
+        <header class="card-content">
+            <p>{{d.Answer|safe}}</p>
+        </header>
     </div>
 {% endfor %}
 {% endblock %}

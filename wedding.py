@@ -39,7 +39,7 @@ def process_events(events):
         if "Artists" in e:
             artists = []
             for a in e["Artists"]:
-                artist = AT["artists"].get(a)['fields']
+                artist = AT["vendors"].get(a)['fields']
                 if 'Status' in artist:
                     if artist['Status'] == 'Confirmed':
                         artists.append(artist)

@@ -2,6 +2,7 @@
 from flask import render_template, request, url_for, redirect, Blueprint
 from flask_login import current_user
 
+from markdown import markdown
 from slugify import slugify
 from pyairtable.formulas import match, FIELD, FIND, STR_VALUE, OR, EQUAL
 from itertools import groupby
@@ -44,7 +45,6 @@ def process_events(events):
                         artists.append(artist)
             e['Artists'] = artists
         d.append(e)
-    print(d)
     return groupby(d, lambda x: x['StartTime'].date())
 
 def compose_formula(list, field):
@@ -65,6 +65,8 @@ def itinerary():
             else:
                 formula = EQUAL(0, FIELD("LimitedInviteNames"))
             events = AT["events"].all(formula = formula, sort = ["StartTime"])
+            for e in events:
+                e['fields']['Description'] = markdown(e['fields']['Description'])
             return render_template(
                 'itinerary.html', 
                 meta=META, 
@@ -80,12 +82,12 @@ def qa():
     if META["Published"]:
         META["Path"] = request.path
         d = []
-        for i in AT["qa"].all(fields = ['Group', 'Question', 'Answer'], sort = ['Group', "Order"]):
+        for i in AT["qa"].all(fields = ['Question', 'Answer']):
             d.append(i['fields'])
         return render_template(
             'qa.html', 
-            meta=META, 
-            data = groupby(d, lambda x: x['Group'])
+            meta = META, 
+            data = d
             )
     else:
         return redirect(url_for('wedding.home'))
@@ -94,13 +96,16 @@ def qa():
 def accommodations():
     if META["Published"]:
         META["Path"] = request.path
-        data = AT["accommodations"].first().get("fields")
-        return render_template('accommodations.html', data = data, meta=META)
+        acc = []
+        for a in AT["accommodations"].all():
+            a['fields']['Description'] = markdown(a['fields']['Description'])
+            acc.append(a['fields'])
+        return render_template('accommodations.html', data = acc, meta=META)
     else:
         return redirect(url_for('wedding.home'))
 
 
-@wedding.route('/travel/getting_around/')
+@wedding.route('/travel/getting-around/')
 def getting_around():
     if META["Published"]:
         META["Path"] = request.path
@@ -109,7 +114,7 @@ def getting_around():
         return redirect(url_for('wedding.home'))
 
 
-@wedding.route('/travel/things_to_do/')
+@wedding.route('/travel/things-to-do/')
 def things_to_do():
     if META["Published"]:
         META["Path"] = request.path
@@ -200,8 +205,3 @@ def rsvp():
             return render_template('rsvp.html', party = party, people = people, attending = attending, error = e, meta=META)
     else:
         return redirect(url_for('wedding.home'))
-    
-    
-    #     email_confirm(current_app, guest_list, META)
-    # except:
-    #     e = "There is no party with that ID."

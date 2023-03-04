@@ -26,15 +26,13 @@
                             {% else %}
                             <h4>{{event.VenueName[0]}}</h4>
                             {% endif %}
-                            <p><i>
                             {% if event.VenueAddress %}
-                            {% for a in event.VenueAddress %}
-                            {{a}}
-                            {% endfor %}
+                            {{event.VenueAddress[0]}}
                             {% endif %}
                             <br>
+                            <i>
                             {% if event.VenueCity %}
-                            {{event.VenueCity[0]}}{% if event.VenueState %}, {{event.VenueState[0]}}{% endif %}
+                            {{event.VenueCity[0]}}{% if event.VenueState %}, {{event.VenueState[0]}}{% endif %}{% if event.VenuePostal %} {{event.VenuePostal[0]}}{% endif %}
                             {% endif %}
                             </i>
                             {% if event.Description %}
@@ -57,19 +55,5 @@
             {% endfor %}
         </div>
     </div>
-{% endfor %}
-{% for date, events in data %}
-    {% for event in events %}
-    {{event}}
-    <script>
-        var map = new maplibregl.Map({
-            container: '{{ event.Slug }}'.concat('-map'),
-            style:
-                'https://api.maptiler.com/maps/streets/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL',
-            zoom: 15,
-            center: [-122.447303, 37.753574]
-        });
-    </script>
-    {% endfor %}
 {% endfor %}
 {% endblock %}

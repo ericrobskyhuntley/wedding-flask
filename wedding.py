@@ -65,15 +65,16 @@ def itinerary():
         META['Path'] = request.path
         if current_user.is_authenticated:
             person = AT["people"].get(current_user.id).get("fields")
-            print(person["GroupNames"])
             if "GroupNames" in person:
                 formula = compose_formula(person["GroupNames"], "LimitedInviteNames")
             else:
                 formula = EQUAL(0, FIELD("LimitedInviteNames"))
-            print(formula)
             events = AT["events"].all(formula = formula, sort = ["StartTime"])
             for e in events:
-                e['fields']['Description'] = markdown(e['fields']['Description'])
+                if "Description" in e['fields']:
+                    e['fields']['Description'] = markdown(e['fields']['Description'])
+                else:
+                    e['fields']['Description'] = ''
             META['events'] = process_events(events)
             return render_template(
                 'itinerary.html', 

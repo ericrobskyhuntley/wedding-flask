@@ -65,10 +65,12 @@ def itinerary():
         META['Path'] = request.path
         if current_user.is_authenticated:
             person = AT["people"].get(current_user.id).get("fields")
+            print(person["GroupNames"])
             if "GroupNames" in person:
                 formula = compose_formula(person["GroupNames"], "LimitedInviteNames")
             else:
                 formula = EQUAL(0, FIELD("LimitedInviteNames"))
+            print(formula)
             events = AT["events"].all(formula = formula, sort = ["StartTime"])
             for e in events:
                 e['fields']['Description'] = markdown(e['fields']['Description'])
@@ -214,6 +216,6 @@ def rsvp():
                     a.append(False)
             if(any(a)):
                 attending = True
-            return render_template('rsvp.html', party = party, people = people, attending = attending, error = e, meta=META)
+            return render_template('rsvp.html', party = party, people = people, attending = attending, error = e, data=META)
     else:
         return redirect(url_for('wedding.home'))

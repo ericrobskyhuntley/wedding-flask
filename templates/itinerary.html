@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% for date, events in data %}
+{% for date, events in data.events %}
     <div class="card block">
         <div class="card-header">
             <p class="card-header-title">{{date.strftime('%B %d, %Y')}}</p>
@@ -47,6 +47,11 @@
                                 {% if event.Artists[role]|length==2%}{% for artist in event.Artists[role] %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>{% if not loop.last %} and {% else %}.{%endif%}{% endfor %}{% endif %}
                                 {% if event.Artists[role]|length>2%}{% for artist in event.Artists[role] %}{% if loop.last %} and {% endif %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>{% if not loop.last %}, {% else %}.{%endif%}{% endfor %}{% endif %}
                             {% endfor %}
+                            {% endif %}
+                            {% if event.GettingThere %}
+                            <hr>
+                            <h4><strong>Getting There</strong></h4>
+                            <p>{{event.GettingThere|safe}}</p>
                             {% endif %}
                         </div>
                     </div>

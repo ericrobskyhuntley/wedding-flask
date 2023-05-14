@@ -28,7 +28,7 @@ def home_redirect():
 @wedding.route('/home')
 def home():
     META["Path"] = request.path
-    return render_template('home.html', meta=META)
+    return render_template('home.html', data=META)
 
 def process_events(events):
     d = []
@@ -72,10 +72,10 @@ def itinerary():
             events = AT["events"].all(formula = formula, sort = ["StartTime"])
             for e in events:
                 e['fields']['Description'] = markdown(e['fields']['Description'])
+            META['events'] = process_events(events)
             return render_template(
                 'itinerary.html', 
-                meta=META, 
-                data=process_events(events)
+                data=META
                 )
         else:
             return redirect(url_for('auth.login'))
@@ -105,7 +105,8 @@ def accommodations():
         for a in AT["accommodations"].all():
             a['fields']['Description'] = markdown(a['fields']['Description'])
             acc.append(a['fields'])
-        return render_template('accommodations.html', data = acc, meta=META)
+        META['acc'] = acc
+        return render_template('accommodations.html', data = META)
     else:
         return redirect(url_for('wedding.home'))
 
@@ -114,7 +115,10 @@ def accommodations():
 def getting_around():
     if META["Published"]:
         META["Path"] = request.path
-        return render_template('travel.html', meta=META)
+        META['GettingAround'] = markdown(
+            AT['meta'].first(fields=['GettingAround'])['fields']['GettingAround']
+            )
+        return render_template('getting-around.html', data=META)
     else:
         return redirect(url_for('wedding.home'))
 
@@ -123,7 +127,7 @@ def getting_around():
 def things_to_do():
     if META["Published"]:
         META["Path"] = request.path
-        return render_template('travel.html', meta=META)
+        return render_template('travel.html', data=META)
     else:
         return redirect(url_for('wedding.home'))
 
@@ -132,7 +136,10 @@ def things_to_do():
 def colophon():
     if META["Published"]:
         META["Path"] = request.path
-        return render_template('colophon.html', meta=META)
+        META['Colophon'] = markdown(
+            AT['meta'].first(fields=['Colophon'])['fields']['Colophon']
+            )
+        return render_template('colophon.html', data=META)
     else:
         return redirect(url_for('wedding.home'))
 

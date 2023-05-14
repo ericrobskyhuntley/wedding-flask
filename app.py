@@ -28,16 +28,23 @@ AT = {
     "accommodations": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Accommodations")
 }
 
-META = AT["meta"].first(fields=['Published', 'Times', 'Names', 'Cities', 'Colophon', 'Registry', 'UnderConstructionImage'])['fields']
-META['UniqueDates'] = unique([dt_parse(datetime).date() for datetime in META['Times']])
-META['ShortNames'] = [name.split()[0] for name in META['Names']]
-META['Colophon'] = markdown(META['Colophon'])
+META = AT["meta"].first(
+    fields = ['Published', 
+              'Times', 
+              'Names', 
+              'Cities', 
+              'Registry',
+              'States']
+              )['fields']
+META["CityStates"] = unique([c + ", " + s for c, s in zip(META["Cities"], META["States"])])
+META['UniqueDates'] = unique([dt_parse(dt).date() for dt in META['Times']])
+META['ShortNames'] = [n.split()[0] for n in META['Names']]
 META['Path'] = 'wedding.home'
 
 if "Published" not in META:
     META["Published"] = False
 
-# META["Published"] = True
+META["Published"] = True
     
 app = Flask(__name__)
 

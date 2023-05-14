@@ -25,7 +25,7 @@ def login():
                 return redirect(META["Path"])
         else:
             e = "Enter one of your party's names, as it appears on your invitation."
-    return render_template('login.html', error = e, meta=META)
+    return render_template('login.html', error = e, data=META)
 
 @auth.route('/logout')
 @login_required

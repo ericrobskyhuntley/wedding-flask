@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if meta['Names'] %}
+{% if data['Names'] %}
 <div class="has-text-centered">
     <div id="names-hero" class="hero is-small">
         <div class="hero-body">
             <div class="card">
                 <div class="card-content">
-                    {% for name in meta['Names'] %}
+                    {% for name in data['Names'] %}
                     <p class="title">{{name}}</p>
                     {% if not loop.last %}
                     <p class="subtitle">&</p>
@@ -18,13 +18,13 @@
         </div>
     </div>
     {% endif %}
-    {% if meta['Cities'] %}
+    {% if data['Cities'] %}
     <div id="places-hero" class="hero is-small">
         <div class="hero-body">
             <div class="card">
                 <div class="card-content">
-                    {% for city in meta['Cities'] %}
-                    <p class="title">{{city}}</p>
+                    {% for c in data['CityStates'] %}
+                    <p class="title">{{c}}</p>
                     {% if not loop.last %}
                     <p class="subtitle">&</p>
                     {% endif %}
@@ -34,12 +34,12 @@
         </div>
     </div>
     {% endif %}
-    {% if meta['UniqueDates'] %}
+    {% if data['UniqueDates'] %}
     <div id="dates-hero" class="hero is-small">
         <div class="hero-body">
             <div class="card">
                 <div class="card-content">
-                    {% for d in meta['UniqueDates'] %}
+                    {% for d in data['UniqueDates'] %}
                     <p class="title">{{d.strftime('%B %d, %Y')}}</p>
                     {% if not loop.last %}
                     <p class="subtitle">-</p>

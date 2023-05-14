@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{meta['ShortNames'] | join(" & ")}}</title>
+    <title>{{data['ShortNames'] | join(" & ")}} | {{data['UniqueDates'] | join(" & ")}}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Lora:ital@0;1&display=swap" rel="stylesheet">
     <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@0;1&display=swap'); </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
@@ -15,7 +15,7 @@
     <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
     <style>
-        {% if not meta["Published"] %}
+        {% if not data["Published"] %}
         html{
             background:#A60A3D;
         }
@@ -92,8 +92,8 @@
     </script>
 </head>
 <body>
-    {% if not meta["Published"] %}
-    <div id="bg" style="background: url('{{meta["UnderConstructionImage"][0].url}}') no-repeat center center; background-size: cover;"></div>
+    {% if not data["Published"] %}
+    <div id="bg" style="background: url('{{data["UnderConstructionImage"][0].url}}') no-repeat center center; background-size: cover;"></div>
     {% endif %}
     <section id="header" class="section">
         <div class="container">
@@ -101,12 +101,12 @@
                 <div class = "column is-8 is-offset-2">
                     <div class="hero is-small">
                         <div class="hero-body">
-                            <p class="title has-text-centered" {% if not meta["Published"] %}style="color:white;"{% endif %}>
-                                <a href="{{ url_for('wedding.home')}}">{{meta['ShortNames'] | join(" & ")}}</a>
+                            <p class="title has-text-centered" {% if not data["Published"] %}style="color:white;"{% endif %}>
+                                <a href="{{ url_for('wedding.home')}}">{{data['ShortNames'] | join(" & ")}}</a>
                             </p>
                         </div>
                     </div>
-                    {% if meta["Published"] %}
+                    {% if data["Published"] %}
                     <nav class="navbar block">
                         <div class="navbar-brand">
                             <a role = "button" class="navbar-burger" data-target="navMenu">
@@ -127,7 +127,7 @@
                                     <a class="navbar-item" href="{{ url_for('wedding.things_to_do') }}">Things to Do</a>
                                 </div>
                             </div>
-                            <a class="navbar-item" href="{{ meta['Registry'] }}">Registry</a>
+                            <a class="navbar-item" href="{{ data['Registry'] }}">Registry</a>
                             <a class="navbar-item" href="{{ url_for('wedding.qa') }}">Q & A</a>
                             <a class="navbar-item" href="{{ url_for('wedding.colophon') }}">Colophon</a>
                         </div>
@@ -137,7 +137,7 @@
             </div>
         </div>
     </section>
-    {% if meta["Published"] %}
+    {% if data["Published"] %}
     <section id="body" class="section">
         <div class="container">
             <div class="columns">
@@ -190,6 +190,12 @@
                 </div>
             </div>
         </div>
+
+    <div class="background multiply" id="video">
+        <video muted="1" loop="1" autoplay="1">
+            <source type="video/mp4" src="{{url_for('static',filename='green_line_reduced.mp4')}}">
+        </video>
+    </div>  
     </section>
     {% endif %}
 </body>

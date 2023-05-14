@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% for d in data %}
+{% for d in data.acc %}
 <div class="card block">
     <div class="card-header">
         <p class="card-header-title">
@@ -24,6 +24,16 @@
                 </div>
             </div>
             <div class="column is-8">
+                {% if d.Address %}
+                {{d.Address[0]}}
+                {% endif %}
+                <br>
+                <i>
+                {% if d.City %}
+                {{d.City[0]}}{% if d.State %}, {{d.State[0]}}{% endif %}{% if d.Postal %} {{d.Postal[0]}}{% endif %}
+                {% endif %}
+                </i>
+                <hr>
                 {{d.Description|safe}}
             </div>
         </div>

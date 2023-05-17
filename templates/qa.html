@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% for d in data %}
+{% for qa in data.qa %}
     <div class="card block">
         <header class="card-header">
-            <h3 class="card-header-title">{{d.Question}}</h3>
+            <h3 class="card-header-title">{{qa.Question}}</h3>
         </header>
         <header class="card-content">
-            <p>{{d.Answer|safe}}</p>
+            <p>{{qa.Answer|safe}}</p>
         </header>
     </div>
 {% endfor %}

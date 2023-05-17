@@ -2,7 +2,7 @@
 
 {% block content %}
 <form method="post">
-    {% for p in people %}
+    {% for p in data.people %}
     <div class = "person-rsvp card block">
         {% if p.Name %}
         <header class="card-header">
@@ -93,7 +93,7 @@
         </div>
     </div>
     {% endfor %}
-    {% if attending %}
+    {% if data.attending %}
     <div class="field">
         <div class="control">
             <button class="button is-large is-fullwidth is-primary" type="submit">Submit</button>

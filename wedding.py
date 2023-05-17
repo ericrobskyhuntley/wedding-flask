@@ -27,8 +27,12 @@ def home_redirect():
 
 @wedding.route('/home')
 def home():
-    META["Path"] = request.path
-    return render_template('home.html', data=META)
+    data = META
+    data["Path"] = request.path
+    return render_template(
+        'home.html', 
+        data = data
+        )
 
 def process_events(events):
     d = []
@@ -62,7 +66,8 @@ def compose_formula(list, field):
 @wedding.route('/itinerary')
 def itinerary():
     if META["Published"]:
-        META['Path'] = request.path
+        data = META
+        data['Path'] = request.path
         if current_user.is_authenticated:
             person = AT["people"].get(current_user.id).get("fields")
             if "GroupNames" in person:
@@ -75,10 +80,10 @@ def itinerary():
                     e['fields']['Description'] = markdown(e['fields']['Description'])
                 else:
                     e['fields']['Description'] = ''
-            META['events'] = process_events(events)
+            data['events'] = process_events(events)
             return render_template(
                 'itinerary.html', 
-                data=META
+                data = data
                 )
         else:
             return redirect(url_for('auth.login'))
@@ -88,14 +93,15 @@ def itinerary():
 @wedding.route('/qa')
 def qa():
     if META["Published"]:
-        META["Path"] = request.path
+        data = META
+        data["Path"] = request.path
         d = []
         for i in AT["qa"].all(fields = ['Question', 'Answer']):
             d.append(i['fields'])
+        data["qa"] = d
         return render_template(
             'qa.html', 
-            meta = META, 
-            data = d
+            data = data
             )
     else:
         return redirect(url_for('wedding.home'))
@@ -103,13 +109,17 @@ def qa():
 @wedding.route('/travel/accommodations')
 def accommodations():
     if META["Published"]:
-        META["Path"] = request.path
+        data = META
+        data["Path"] = request.path
         acc = []
         for a in AT["accommodations"].all():
             a['fields']['Description'] = markdown(a['fields']['Description'])
             acc.append(a['fields'])
-        META['acc'] = acc
-        return render_template('accommodations.html', data = META)
+        data['acc'] = acc
+        return render_template(
+            'accommodations.html', 
+            data = data
+            )
     else:
         return redirect(url_for('wedding.home'))
 
@@ -117,11 +127,17 @@ def accommodations():
 @wedding.route('/travel/getting-around/')
 def getting_around():
     if META["Published"]:
-        META["Path"] = request.path
-        META['GettingAround'] = markdown(
-            AT['meta'].first(fields=['GettingAround'])['fields']['GettingAround']
+        data = META
+        data["Path"] = request.path
+        data['GettingAround'] = markdown(
+            AT['meta'].first(
+                fields = ['GettingAround']
+                )['fields']['GettingAround']
             )
-        return render_template('getting-around.html', data=META)
+        return render_template(
+            'getting-around.html',
+            data = data
+            )
     else:
         return redirect(url_for('wedding.home'))
 
@@ -129,8 +145,12 @@ def getting_around():
 @wedding.route('/travel/things-to-do/')
 def things_to_do():
     if META["Published"]:
-        META["Path"] = request.path
-        return render_template('travel.html', data=META)
+        data = META
+        data["Path"] = request.path
+        return render_template(
+            'travel.html', 
+            data = data
+            )
     else:
         return redirect(url_for('wedding.home'))
 
@@ -138,11 +158,15 @@ def things_to_do():
 @wedding.route('/colophon')
 def colophon():
     if META["Published"]:
-        META["Path"] = request.path
-        META['Colophon'] = markdown(
+        data = META
+        data["Path"] = request.path
+        data['Colophon'] = markdown(
             AT['meta'].first(fields=['Colophon'])['fields']['Colophon']
             )
-        return render_template('colophon.html', data=META)
+        return render_template(
+            'colophon.html', 
+            data = data
+            )
     else:
         return redirect(url_for('wedding.home'))
 
@@ -170,17 +194,17 @@ def check_form(field, values, request):
 @wedding.route('/rsvp', methods = ['GET', 'POST'])
 def rsvp():
     if META["Published"]:
-        META['Path'] = request.path
-        e = None
+        data = META
+        data['Path'] = request.path
         a = []
-        attending = False
+        data["attending"] = False
         if not current_user.is_authenticated:
             return redirect(url_for('auth.login'))
         else:
             party_id = AT["people"].get(current_user.id)["fields"]["Party"][0]
-            people = []
-            party = AT["parties"].get(party_id)["fields"]
-            for p in party['People']:
+            data["people"] = []
+            data["party"] = AT["parties"].get(party_id)["fields"]
+            for p in data["party"]['People']:
                 values = {}
                 person = AT["people"].get(p)
                 values["id"] = person["id"]
@@ -210,13 +234,17 @@ def rsvp():
                     AT["parties"].update(party_id, {
                         "Reply": True
                     })
-                people.append(values)
+                data["people"].append(values)
                 if values["WeddingRSVP"] == "Yes":
                     a.append(True)
                 else:
                     a.append(False)
             if(any(a)):
-                attending = True
-            return render_template('rsvp.html', party = party, people = people, attending = attending, error = e, data=META)
+                # attending = True
+                data["attending"] = True
+            return render_template(
+                'rsvp.html',
+                data = data
+                )
     else:
         return redirect(url_for('wedding.home'))

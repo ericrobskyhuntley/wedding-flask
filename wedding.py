@@ -97,6 +97,8 @@ def qa():
         data["Path"] = request.path
         d = []
         for i in AT["qa"].all(fields = ['Question', 'Answer']):
+            i['fields']['Question'] = markdown(i['fields']['Question'])
+            i['fields']['Answer'] = markdown(i['fields']['Answer'])
             d.append(i['fields'])
         data["qa"] = d
         return render_template(

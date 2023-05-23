@@ -80,6 +80,8 @@ def itinerary():
                     e['fields']['Description'] = markdown(e['fields']['Description'])
                 else:
                     e['fields']['Description'] = ''
+                if "VenueName" not in e['fields']:
+                    e['fields']['VenueName'] = "To be announced!"
             data['events'] = process_events(events)
             return render_template(
                 'itinerary.html', 
@@ -96,7 +98,7 @@ def qa():
         data = META
         data["Path"] = request.path
         d = []
-        for i in AT["qa"].all(fields = ['Question', 'Answer']):
+        for i in AT["qa"].all(formula=EQUAL(1, FIELD("Publish"))):
             i['fields']['Question'] = markdown(i['fields']['Question'])
             i['fields']['Answer'] = markdown(i['fields']['Answer'])
             d.append(i['fields'])
@@ -114,9 +116,13 @@ def accommodations():
         data = META
         data["Path"] = request.path
         acc = []
-        for a in AT["accommodations"].all():
-            a['fields']['Description'] = markdown(a['fields']['Description'])
-            acc.append(a['fields'])
+        for a in AT["accommodations"].all(formula=EQUAL(1, FIELD("Listed"))):
+            a = a['fields']
+            a['Name'] = a['Name'][0]
+            a['Slug'] = a['Name'].lower().replace(' ', '_')
+            a['Website'] = a['Website'][0]
+            a['Description'] = markdown(a['Description'])
+            acc.append(a)
         data['acc'] = acc
         return render_template(
             'accommodations.html', 

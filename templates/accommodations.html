@@ -5,12 +5,13 @@
 <div class="card block">
     <div class="card-header">
         <p class="card-header-title">
-            <a href="{{d.Website[0]}}">
-                {{d.Name[0]}}
+            <a href="{{d.Website}}">
+                {{d.Name}}
             </a>
         </p>
     </div>
     <div class="card-content">
+        <div id="map_{{d.Slug}}" class="map"></div>
         <div class="columns">
             <div class="column is-4">
                 <div class="wedding-block block">
@@ -40,4 +41,16 @@
     </div>
 </div>
 {% endfor %}
+<script id = "map_generator">{% for d in data.acc %}
+    const {{d.Slug}} = new maplibregl.Map({
+        container: 'map_{{ d.Slug }}',
+        style: 'https://api.maptiler.com/maps/39c06a26-0b36-4c9a-8467-62e0402dc331/style.json?key=TW5HwRPrq8DTWuAQ0Lmj',
+        center: [{{ d.Lng[0] }}, {{ d.Lat[0] }}],
+        zoom: 14
+    });
+    new maplibregl.Marker()
+        .setLngLat([{{ d.Lng[0] }}, {{ d.Lat[0] }}])
+        .addTo({{d.Slug}});
+    {% endfor %}
+</script>
 {% endblock %}

@@ -1,45 +1,47 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% for date, events in data.events %}
+{% for date in data.itinerary %}
     <div class="card block">
         <div class="card-header">
-            <p class="card-header-title">{{date.strftime('%B %d, %Y')}}</p>
+            <p class="card-header-title">{{date.Date.strftime('%B %d, %Y')}}</p>
         </div>
-        <div class="card-content">
-            {% for event in events %}
-            <div id="{{event.Slug}}-map" class="block"></div>
-            <div class="columns">
-                <div class="column is-4">
-                    <code>{{event.StartTime.strftime('%I:%M %p')}} - {{event.EndTime.strftime('%I:%M %p')}}</code>
+    </div>
+    {% for venue in date.Venues %}
+    <div id="map_{{venue.Slug}}" class="map block"></div>
+        <div class="columns">
+            <div class="column is-4">
+                <div class="card block">
+                    <div class="card-content">
+                        {% if venue.VenueURL %}
+                        <h4><a href="{{venue.VenueURL}}">{{venue.VenueName}}</a></h4>
+                        {% else %}
+                        <h4>{{venue.VenueName}}</h4>
+                        {% endif %}
+                        {% if venue.VenueAddress %}
+                        {{venue.VenueAddress}}
+                        <br>
+                        {% endif %}
+                        <i>
+                            {% if venue.VenueCity %}
+                            {{venue.VenueCity}}{% if venue.VenueState %}, {{venue.VenueState}}{% endif %}{% if venue.VenuePostal %} {{venue.VenuePostal}}{% endif %}
+                            {% endif %}
+                        </i>
+                    </div>
                 </div>
-                <div class="column is-8">
-                    <div class="card block">
-                        <div class="card-header">
-                            <p class="card-header-title">
-                                {{event.Name}}
-                            </p>
-                        </div>
-                        <div class="card-content">
-                            {% if event.VenueURL %}
-                            <h4><a href="{{event.VenueURL[0]}}">{{event.VenueName[0]}}</a></h4>
-                            {% else %}
-                            <h4>{{event.VenueName[0]}}</h4>
-                            {% endif %}
-                            {% if event.VenueAddress %}
-                            {{event.VenueAddress[0]}}
-                            {% endif %}
-                            <br>
-                            <i>
-                            {% if event.VenueCity %}
-                            {{event.VenueCity[0]}}{% if event.VenueState %}, {{event.VenueState[0]}}{% endif %}{% if event.VenuePostal %} {{event.VenuePostal[0]}}{% endif %}
-                            {% endif %}
-                            </i>
-                            {% if event.Description %}
-                            <hr>
-                            <p>{{event.Description|safe}}</p>
-                            {% endif %}
-                            {% if event.Artists %}
+            </div>
+            <div class="column is-8">
+                {% for event in venue.Events %}
+                <div class="card block">
+                    <div class="card-header">
+                        <p class="card-header-title">
+                            {{event.Name}}
+                        </p>
+                    </div>
+                    <div class = "card-content">
+                        <p><code>{{event.StartTime.strftime('%I:%M %p')}} - {{event.EndTime.strftime('%I:%M %p')}}</code></p>
+                        <p>{{event.Description|safe}}</p>
+                        {% if event.Artists %}
                             <hr>
                             {% for role in event.Artists.keys() %}
                                 {{role}} by 
@@ -48,17 +50,26 @@
                                 {% if event.Artists[role]|length>2%}{% for artist in event.Artists[role] %}{% if loop.last %} and {% endif %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>{% if not loop.last %}, {% else %}.{%endif%}{% endfor %}{% endif %}
                             {% endfor %}
                             {% endif %}
-                            {% if event.GettingThere %}
-                            <hr>
-                            <h4><strong>Getting There</strong></h4>
-                            <p>{{event.GettingThere|safe}}</p>
-                            {% endif %}
-                        </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
-    </div>
+    {% endfor %}
 {% endfor %}
+
+<script id = "map_generator">{% for date in data.itinerary %}
+    {% for venue in date.Venues %}
+    const {{venue.Slug}} = new maplibregl.Map({
+        container: 'map_{{ venue.Slug }}',
+        style: 'https://api.maptiler.com/maps/39c06a26-0b36-4c9a-8467-62e0402dc331/style.json?key=TW5HwRPrq8DTWuAQ0Lmj',
+        center: [{{ venue.Lng }}, {{ venue.Lat }}],
+        zoom: 14
+    });
+    new maplibregl.Marker()
+        .setLngLat([{{ venue.Lng }}, {{ venue.Lat }}])
+        .addTo({{venue.Slug}});
+    {% endfor %}
+    {% endfor %}
+</script>
 {% endblock %}

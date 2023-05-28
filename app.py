@@ -38,11 +38,12 @@ META = AT["meta"].first(
               )['fields']
 META["CityStates"] = unique([c + ", " + s for c, s in zip(META["Cities"], META["States"])])
 META['UniqueDates'] = unique([dt_parse(dt).date() for dt in META['Times']])
+META['ShortNames'] = [n.split()[0] for n in META['Names']]
 
 # Remove extraneous keys.
 for key in ["Cities", "States", "Times"]:
     del META[key]
-META['ShortNames'] = [n.split()[0] for n in META['Names']]
+    
 META['Path'] = 'wedding.home'
 
 if "Published" not in META:

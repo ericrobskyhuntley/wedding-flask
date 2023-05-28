@@ -38,23 +38,35 @@ def process_events(events):
     d = []
     for e in events:
         e = e['fields']
+        if "Description" in e:
+            e['Description'] = markdown(e['Description'])
+        else:
+            e['Description'] = ''
+        if "VenueName" not in e:
+            e['VenueName'] = "To be announced!"
         e['StartTime'] = dt_parse(e['StartTime'])
         e['EndTime'] = dt_parse(e['EndTime'])
         e['Slug'] = slugify(e['Name'])
         if "Artists" in e:
             artists = []
-            for a in e["Artists"]:
-                artist = AT["vendors"].get(a)['fields']
-                if 'Status' in artist:
-                    if artist['Status'] == 'Confirmed':
-                        artists.append(artist)
+            for artist in e["Artists"]:
+                a = AT["vendors"].get(artist)['fields']
+                art = {} 
+                art['Website'] = a.get('Website')
+                art['Name'] = a.get('Name')
+                art['Role'] = a.get('Role')
+                if 'Status' in a:
+                    if a['Status'] == 'Confirmed':
+                        artists.append(art)
             artists = sorted(artists, key = itemgetter('Role'))
             a_dict = {}
             for role, artist in groupby(artists, key = itemgetter('Role')):
                 a_dict[role] = list(artist)
             e['Artists'] = a_dict
         d.append(e)
-    return groupby(d, lambda x: x['StartTime'].date())
+    
+    results = groupby(d, lambda x: x['StartTime'].date())
+    return results
 
 def compose_formula(list, field):
     f = []
@@ -75,14 +87,33 @@ def itinerary():
             else:
                 formula = EQUAL(0, FIELD("LimitedInviteNames"))
             events = AT["events"].all(formula = formula, sort = ["StartTime"])
-            for e in events:
-                if "Description" in e['fields']:
-                    e['fields']['Description'] = markdown(e['fields']['Description'])
-                else:
-                    e['fields']['Description'] = ''
-                if "VenueName" not in e['fields']:
-                    e['fields']['VenueName'] = "To be announced!"
-            data['events'] = process_events(events)
+            
+            itinerary = []
+            for date, event in process_events(events):
+                d = {}
+                d['Date'] = date
+                venues = []
+                for v, e in groupby(event, lambda x: {
+                    'VenueName': x['VenueName'][0],
+                    'VenueAddress': x['VenueAddress'][0], 
+                    'VenueCity': x['VenueCity'][0], 
+                    'VenueState': x['VenueState'][0], 
+                    'VenuePostal': x['VenuePostal'][0], 
+                    'VenueURL': x['VenueURL'][0], 
+                    'Lat': x['Lat'][0], 
+                    'Lng': x['Lng'][0]}):
+                    venue = v
+                    es = []
+                    for i in e:
+                        es.append(i)
+                    venue['Slug'] = v['VenueName'].lower().replace(' ', '_').replace("'", '_')
+                    venue["Events"] = es
+                    venues.append(venue)
+                d['Venues'] = venues
+                itinerary.append(d)
+            data['itinerary'] = itinerary
+            from pprint import pprint
+            pprint(data)
             return render_template(
                 'itinerary.html', 
                 data = data
@@ -120,7 +151,7 @@ def accommodations():
         for a in AT["accommodations"].all(formula=EQUAL(1, FIELD("Listed"))):
             a = a['fields']
             a['Name'] = a['Name'][0]
-            a['Slug'] = a['Name'].lower().replace(' ', '_')
+            a['Slug'] = a['Name'].lower().replace(' ', '_').replace("'", '_')
             a['Website'] = a['Website'][0]
             a['Description'] = markdown(a['Description'])
             acc.append(a)

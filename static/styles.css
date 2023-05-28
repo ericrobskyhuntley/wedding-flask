@@ -1,7 +1,7 @@
 html, body {
     margin:0;
     height:100%;
-    background:#A60A3D;
+    /* background:#A60A3D; */
 }
 
 body {
@@ -49,19 +49,20 @@ hr {
     }
 }
 
-.card .map {
+.map {
     width: 100%; 
     height: 15rem;
     margin-bottom: 1.5rem;
 }
 
-.title {
+
+/* .title {
     color: #FFFFFF;
 }
 
 .title > a {
     color: inherit;
-}
+} */
 
 .navbar .navbar-menu {
     flex-grow: initial;

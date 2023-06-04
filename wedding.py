@@ -8,7 +8,7 @@ from pyairtable.formulas import match, FIELD, FIND, STR_VALUE, OR, EQUAL
 from itertools import groupby
 from operator import itemgetter
 from app import AT, META, dt_parse
-    from ics import Calendar, Event
+from ics import Calendar, Event
 
 # from utils import email_confirm
 
@@ -346,8 +346,6 @@ def rsvp():
             if(any(a)):
                 # attending = True
                 data["attending"] = True
-            if request.method == 'POST':
-                return redirect(url_for('wedding.home'))
             else:
                 return render_template(
                     'rsvp.html',

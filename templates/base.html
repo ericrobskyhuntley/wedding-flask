@@ -17,7 +17,7 @@
     <style>
         {% if not data["Published"] %}
         html{
-            background:#A60A3D;
+            background:#a60a3d;
         }
 
         .hero .card .title {
@@ -29,147 +29,80 @@
         }
         {% endif %}
     </style>
-    <script>
-        jQuery.fn.handleKeyboardChange = function(nDelay) {
-            // Utility function to test if a keyboard event should be ignored
-            function shouldIgnore(event) 
-            { 
-                var mapIgnoredKeys = {
-                    9:true, // Tab
-                    16:true, 17:true, 18:true, // Shift, Alt, Ctrl
-                    37:true, 38:true, 39:true, 40:true, // Arrows 
-                    91:true, 92:true, 93:true // Windows keys
-                };
-                return mapIgnoredKeys[event.which];
-            }
-
-            // Utility function to fire OUR change event if the value was actually changed
-            function fireChange($element)
-            {
-                if( $element.val() != jQuery.data($element[0], "valueLast") )
-                {
-                    jQuery.data($element[0], "valueLast", $element.val())
-                    $element.trigger("change");
-                }
-            }
-
-            // The currently running timeout,
-            // will be accessed with closures
-            var timeout = 0;
-
-            // Utility function to cancel a previously set timeout
-            function clearPreviousTimeout()
-            {
-                if( timeout )
-                { 
-                    clearTimeout(timeout);
-                }
-            }
-
-            return this.keydown(function(event){
-                if( shouldIgnore(event) ) return;
-                // User pressed a key, stop the timeout for now
-                clearPreviousTimeout();
-                return null; 
-            }).keyup(function(event){
-                if( shouldIgnore(event) ) return;
-                // Start a timeout to fire our event after some time of inactivity
-                // Eventually cancel a previously running timeout
-                clearPreviousTimeout();
-                var $self = $(this);
-                timeout = setTimeout(function(){ fireChange($self) }, nDelay);
-            }).change(function(){
-                // Fire a change
-                // Use our function instead of just firing the event
-                // Because we want to check if value really changed since
-                // our previous event.
-                // This is for when the browser fires the change event
-                // though we already fired the event because of the timeout
-                fireChange($(this));
-            })
-            ;
-        }
-    </script>
 </head>
-<body>
+<body class="is-family-sans-serif">
     {% if not data["Published"] %}
     <div id="bg" style="background: url('{{data["UnderConstructionImage"][0].url}}') no-repeat center center; background-size: cover;"></div>
     {% endif %}
     <section id="header" class="section">
         <div class="container">
-            <div class="columns">
-                <div class = "column is-8 is-offset-2">
-                    <div class="hero is-small">
-                        <div class="hero-body">
-                            <p class="title has-text-centered" {% if not data["Published"] %}style="color:white;"{% endif %}>
-                                <a href="{{ url_for('wedding.home')}}">{{data['ShortNames'] | join(" & ")}}</a>
-                            </p>
-                        </div>
-                    </div>
-                    {% if data["Published"] %}
-                    <nav class="navbar block">
-                        <div class="navbar-brand">
-                            <a role = "button" class="navbar-burger" data-target="navMenu">
-                                <span aria-hidden="true"></span>
-                                <span aria-hidden="true"></span>
-                                <span aria-hidden="true"></span>
-                            </a>
-                        </div>
-                        <div class="navbar-menu" id="navMenu">
-                            <a class="navbar-item" href="{{ url_for('wedding.home') }}">Home</a>
-                            <a class="navbar-item" href="{{ url_for('wedding.rsvp') }}">RSVP</a>
-                            <a class="navbar-item" href="{{ url_for('wedding.itinerary') }}">Itinerary</a>
-                            <div class="navbar-item has-dropdown is-hoverable">
-                                <a class="navbar-link">Travel</a>
-                                <div class="navbar-dropdown">
-                                    <a class="navbar-item" href="{{ url_for('wedding.accommodations') }}">Accommodations</a>
-                                    <a class="navbar-item" href="{{ url_for('wedding.getting_around') }}">Getting Around</a>
-                                    <a class="navbar-item" href="{{ url_for('wedding.things_to_do') }}">Things to Do</a>
-                                </div>
-                            </div>
-                            <a class="navbar-item" href="{{ data['Registry'] }}">Registry</a>
-                            <a class="navbar-item" href="{{ url_for('wedding.qa') }}">Q & A</a>
-                            <a class="navbar-item" href="{{ url_for('wedding.colophon') }}">Colophon</a>
-                        </div>
-                    </nav>
-                    {% endif %}
+            <div class="columns is-vcentered">
+                <div class="column is-4 is-offset-4 has-text-centered">
+                    <p class="title" {% if not data["Published"] %}style="color:white;"{% endif %}>
+                        <a href="{{ url_for('wedding.home')}}">{{data['ShortNames'] | join(" & ")}}</a>
+                    </p>
+                    <p class="heading" {% if not data["Published"] %}style="color:white;"{% endif %}>
+                        {% for d in data['UniqueDates'] %}
+                        {{d.strftime('%B %d, %Y')}}
+                        {% if not loop.last %} - {% endif %}
+                        {% endfor %} ◦ {% for c in data['CityStates'] %}
+                        {{c}}
+                        {% if not loop.last %}
+                        &
+                        {% endif %}
+                        {% endfor %}
+                    </p>
                 </div>
             </div>
+            {% if data["Published"] %}
+            <nav class="navbar block">
+                <div class="navbar-brand">
+                    <a role = "button" class="navbar-burger" data-target="navMenu">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+                <div class="navbar-menu" id="navMenu">
+                    <a class="navbar-item" href="{{ url_for('wedding.home') }}">Home</a>
+                    <a class="navbar-item" href="{{ url_for('wedding.rsvp') }}">RSVP</a>
+                    <a class="navbar-item" href="{{ url_for('wedding.itinerary') }}">Itinerary</a>
+                    <a class="navbar-item" href="{{ url_for('wedding.accommodations') }}">Accommodations</a>
+                    <!-- <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">Travel</a>
+                        <div class="navbar-dropdown">
+                            <a class="navbar-item" href="{{ url_for('wedding.getting_around') }}">Getting Around</a>
+                            <a class="navbar-item" href="{{ url_for('wedding.things_to_do') }}">Things to Do</a>
+                        </div>
+                    </div> -->
+                    <a class="navbar-item" href="{{ data['Registry'] }}">Registry</a>
+                    <a class="navbar-item" href="{{ url_for('wedding.qa') }}">Q & A</a>
+                    <a class="navbar-item" href="{{ url_for('wedding.colophon') }}">Colophon</a>
+                </div>
+            </nav>
+            {% endif %}
         </div>
     </section>
     {% if data["Published"] %}
     <section id="body" class="section">
+        {% block content %} {% endblock %}
+    </section>
+    {% if current_user.is_authenticated %}
+    <section id="authbox" class="is-transparent">
+        <div class="card authbox">
+            <div class="card-content">
+                <p class="block heading">Viewing as<br><strong>{{current_user.name}}</strong></p>
+                <div><button class="button is-small" onclick="window.location.href='{{url_for("auth.logout")}}';" type="button">Logout</button>
+            </div>
+        </div>
         <div class="container">
             <div class="columns">
-                <div class = "column is-8 is-offset-2">
-                    {% block content %} {% endblock %}
+                <div class="column is-4 is-offset-4">
                 </div>
             </div>
         </div>
     </section>
-    <section id="footer" class="section">
-        <div class="container">
-            <div class="columns">
-                <div class = "column is-8 is-offset-2">
-                    {% if current_user.is_authenticated %}
-                    <footer class="footer is-transparent">
-                        <div class="columns">
-                            <div class="column is-4 is-offset-4">
-                                <div class="card">
-                                    <div class="card-content">
-                                        <p class="block">Viewing as <strong>{{current_user.name}}</strong>.</p>
-                                        <button class="button is-small" onclick="window.location.href='{{url_for("auth.login")}}';" type="button">Change User</button>
-                                        <button class="button is-small" onclick="window.location.href='{{url_for("auth.logout")}}';" type="button">Logout</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </footer>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </section>
+    {% endif %}
     {% else %}
     <section id="body" class="section">
         <div class="container">
@@ -191,24 +124,22 @@
             </div>
         </div>
     {% endif %}
-
-    <div class="background multiply" id="video">
-        <video muted="1" loop="1" autoplay="1">
-            <source type="video/mp4" src="{{url_for('static',filename='green_line_reduced.mp4')}}">
-        </video>
-    </div>  
     </section>
+    <div class="background overlay">
+        <video muted="1" loop autoplay>
+            <source type="video/mp4" src="{{url_for('static',filename='green_line.mp4')}}">
+        </video>
+    </div> 
+    <div class="background gradient"></div>
 </body>
 <script>
     $(document).ready(function() {
-
     // Check for click events on the navbar burger icon
     $(".navbar-burger").click(function() {
         // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
         $(".navbar-burger").toggleClass("is-active");
         $(".navbar-menu").toggleClass("is-active");
         });
-
     // Hide login modal on click of close button
     $(".close-modal").click(function() {
         $(".rsvp").toggleClass("is-active");

@@ -1,9 +1,10 @@
 from app import AT, META
 from geocoder import opencage, mapbox
-
 import os
 from dotenv import load_dotenv
 load_dotenv()
+
+from utils import address_if_blank
 
 def geocode(address, creds={}):
     """
@@ -60,18 +61,6 @@ def geocode(address, creds={}):
         "lng": lng
     }
 
-
-def address_if_blank(existing, new_col, new_dict, concat_string = ", "):
-    """
-    concatenates values of a dict based on whether value exists.
-    """
-    if new_col in new_dict:
-        if len(existing) > 0:
-            existing = existing + concat_string + new_dict[new_col]
-        else:
-            existing = new_dict[new_col]
-    return existing
-
 def process_and_geocode(table, creds = None):
     """
     Processes address and updates Airtable with geocoded coordinates.
@@ -104,6 +93,6 @@ def process_and_geocode(table, creds = None):
 
 if __name__ == "__main__":
     print("Processing and geocoding invited parties.")
-    process_and_geocode("parties")
+    # process_and_geocode("parties")
     print("Processing and geocoding vendors.")
     process_and_geocode("vendors")

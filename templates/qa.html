@@ -1,14 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% for qa in data.qa %}
-    <div class="card block">
-        <header class="card-header">
-            <h3 class="card-header-title">{{qa.Question|safe}}</h3>
-        </header>
-        <header class="card-content">
-            <p>{{qa.Answer|safe}}</p>
-        </header>
+<div class="container">
+    <div class="columns">
+        <div class = "column is-8 is-offset-2">
+        {% for qa in data.qa %}
+            <div class="columns">
+                <div class="column is-4 has-text-right">
+                    <div class="subtitle box">{{qa.Question|safe}}</div>
+                </div>
+                <div class="column is-8">
+                    <div class="box">{{qa.Answer|safe}}</div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
     </div>
-{% endfor %}
+</div>
 {% endblock %}

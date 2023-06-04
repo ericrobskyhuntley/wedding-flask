@@ -1,54 +1,25 @@
 {% extends 'base.html' %}
-
 {% block content %}
-{% if data['Names'] %}
-<div class="has-text-centered">
-    <div id="names-hero" class="hero is-small">
+
+<div class="container luminosity-blend">
+    <div class="columns">
+        <!-- <section class="hero is-link is-fullheight-with-navbar">
         <div class="hero-body">
-            <div class="card">
-                <div class="card-content">
-                    {% for name in data['Names'] %}
-                    <p class="title">{{name}}</p>
-                    {% if not loop.last %}
-                    <p class="subtitle">&</p>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
+            <p class="title">
+            Fullheight hero with navbar
+            </p>
         </div>
-    </div>
-    {% endif %}
-    {% if data['CityStates'] %}
-    <div id="places-hero" class="hero is-small">
-        <div class="hero-body">
-            <div class="card">
-                <div class="card-content">
-                    {% for c in data['CityStates'] %}
-                    <p class="title">{{c}}</p>
-                    {% if not loop.last %}
-                    <p class="subtitle">&</p>
-                    {% endif %}
-                    {% endfor %}
-                </div>
+        </section> -->
+        <div class="luminosity-blend column is-12">
+            <div class="image-caption">
+                <span class="tag">Photo by Bella Purdy.</span>
             </div>
-        </div>
-    </div>
-    {% endif %}
-    {% if data['UniqueDates'] %}
-    <div id="dates-hero" class="hero is-small">
-        <div class="hero-body">
-            <div class="card">
-                <div class="card-content">
-                    {% for d in data['UniqueDates'] %}
-                    <p class="title">{{d.strftime('%B %d, %Y')}}</p>
-                    {% if not loop.last %}
-                    <p class="subtitle">-</p>
-                    {% endif %}
-                    {% endfor %}
+            <figure class="image">
+                <div class="hover-revealer" style="background-image: url({{url_for('static',filename='cute_picture.png')}})">
+                <img class="hover-hidden" src="{{url_for('static',filename='silly_picture.png')}}">
                 </div>
-            </div>
+            </figure>
         </div>
     </div>
 </div>
-{% endif %}
 {% endblock %}

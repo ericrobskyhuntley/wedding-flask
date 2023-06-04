@@ -9,6 +9,8 @@ from itertools import groupby
 from operator import itemgetter
 from app import AT, META, dt_parse
 
+from utils import address_if_blank
+
 # from utils import email_confirm
 
 META["Path"] = None
@@ -35,18 +37,45 @@ def home():
         )
 
 def process_events(events):
+    from ics import Calendar, Event
     d = []
     for e in events:
         e = e['fields']
-        if "Description" in e:
-            e['Description'] = markdown(e['Description'])
+        c = Calendar()
+        e_ics = Event()
+        e['VenueName'] = e.get('VenueName')[0]
+        e['VenueAddress'] = e.get('VenueAddress')[0]
+        e['VenueCity'] = e.get('VenueCity')[0]
+        e['VenueState'] = e.get('VenueState')[0]
+        e['VenuePostal'] = e.get('VenuePostal')[0]
+        if 'VenueURL' in e:
+            e['VenueURL'] = e.get('VenueURL')[0]
         else:
-            e['Description'] = ''
+            e['VenueURL'] = None
+        e['Lat'] = e.get('Lat')[0]
+        e['Lng'] = e.get('Lng')[0]
+        e_ics.name = " & ".join(META['ShortNames']) + ': ' + e.get('Name')
+        e_ics.begin = e.get('StartTime')
+        e_ics.end = e.get('EndTime')
+        e_ics.description = e.get('Description')
+        e_ics.url = META.get("URL")
+        e_ics.geo = (e['Lat'], e['Lng'])
+        add = ""
+        add = e.get("VenueAddress")
+        add = add + ", " + e.get("VenueCity")
+        add = add + ", " + e.get("VenueState")
+        add = add + " " + e.get("VenuePostal")
+        e_ics.location = add
+        c.events.add(e_ics)
+        if 'Description' in e:
+            e['Description'] = markdown(e['Description'])
         if "VenueName" not in e:
             e['VenueName'] = "To be announced!"
+        e['ics'] = c.serialize()
         e['StartTime'] = dt_parse(e['StartTime'])
         e['EndTime'] = dt_parse(e['EndTime'])
         e['Slug'] = slugify(e['Name'])
+        e['Directions'] = "https://www.google.com/maps?saddr=My+Location&daddr=" + add
         if "Artists" in e:
             artists = []
             for artist in e["Artists"]:
@@ -92,19 +121,28 @@ def itinerary():
             for date, event in process_events(events):
                 d = {}
                 d['Date'] = date
+                date_event_names = []
+
                 venues = []
                 for v, e in groupby(event, lambda x: {
-                    'VenueName': x['VenueName'][0],
-                    'VenueAddress': x['VenueAddress'][0], 
-                    'VenueCity': x['VenueCity'][0], 
-                    'VenueState': x['VenueState'][0], 
-                    'VenuePostal': x['VenuePostal'][0], 
-                    'VenueURL': x['VenueURL'][0], 
-                    'Lat': x['Lat'][0], 
-                    'Lng': x['Lng'][0]}):
+                    'VenueName': x['VenueName'],
+                    'VenueAddress': x['VenueAddress'], 
+                    'VenueCity': x['VenueCity'], 
+                    'VenueState': x['VenueState'], 
+                    'VenuePostal': x['VenuePostal'], 
+                    'VenueURL': x['VenueURL'], 
+                    'Lat': x['Lat'], 
+                    'Lng': x['Lng'],
+                    'Directions': x['Directions']}):
                     venue = v
                     es = []
                     for i in e:
+                        if i.get("DressCode") == "Casual":
+                            i["DressCodeDesc"] = "Wear whatever makes you feel comfortable! Jeans okay."
+                        if i.get("DressCode") == "Feel-Good Festive":
+                            i["DressCodeDesc"] = "Wear whatever puts you in the mood to celebrate. No jeans, no tuxes. Dancing shoes."
+                        date_event_names.append(i['Name'])
+                        d['DateDesc'] = ', '.join(date_event_names)
                         es.append(i)
                     venue['Slug'] = v['VenueName'].lower().replace(' ', '_').replace("'", '_')
                     venue["Events"] = es
@@ -112,8 +150,6 @@ def itinerary():
                 d['Venues'] = venues
                 itinerary.append(d)
             data['itinerary'] = itinerary
-            from pprint import pprint
-            pprint(data)
             return render_template(
                 'itinerary.html', 
                 data = data
@@ -154,6 +190,12 @@ def accommodations():
             a['Slug'] = a['Name'].lower().replace(' ', '_').replace("'", '_')
             a['Website'] = a['Website'][0]
             a['Description'] = markdown(a['Description'])
+            add = ""
+            add = a.get("Address")[0]
+            add = add + ", " + a.get("City")[0]
+            add = add + ", " + a.get("State")[0]
+            add = add + " " + a.get("Postal")[0]
+            a['Directions'] = "https://www.google.com/maps?saddr=My+Location&daddr=" + add
             acc.append(a)
         data['acc'] = acc
         return render_template(
@@ -204,6 +246,7 @@ def colophon():
             AT['meta'].first(fields=['Colophon'])['fields']['Colophon']
             )
         return render_template(
+
             'colophon.html', 
             data = data
             )
@@ -219,6 +262,16 @@ def check_none(field, values, values_dict, none_val = None):
     else:
         values_dict[field] = values[field]
     return values_dict
+
+def check_form_list(field, values, request):
+    field_lc = field.lower()
+    field_id = "_".join([field_lc, "id"])
+    if field_id in values:
+        if values[field_id] in request.form:
+            values[field] = request.form.getlist(values[field_id])
+        else:
+            values[field] = []
+    return values
 
 def check_form(field, values, request):
     field_lc = field.lower()
@@ -250,26 +303,39 @@ def rsvp():
                 values["id"] = person["id"]
                 person = person["fields"]
 
-                text_fields = ["Name", "AnythingElse"]
-                choice_fields = ["WeddingRSVP", "WelcomeRSVP", "BagelsRSVP", "Email", "Meal"]
+                if "Name" in person:
+                    person["FirstName"] = person["Name"].split(" ", 1)[0]
+                else:
+                    person["FirstName"] = "this person"
+
+                text_fields = ["Name", "FirstName", "AnythingElseDietary", "Email"]
+                choice_fields = ["WeddingRSVP", "WelcomeRSVP", "BrunchRSVP", "MBTAPass", "BlueBikesPass", "Shuttle"]
+                list_fields = ["Dietary"]
 
                 for field in text_fields:
                     values = check_none(field, person, values, none_val = "")
 
                 for field in choice_fields:
                     values = check_none(field, person, values)
-
+                
+                for field in list_fields:
+                    values = check_none(field, person, values, none_val = [])
                 if request.method == 'POST':
                     for field in text_fields + choice_fields:
                         values = check_form(field, values, request)
+                    for field in list_fields:
+                        values = check_form_list(field, values, request)
                     AT["people"].update(values["id"], {
                         "Name": values["Name"],
                         "WeddingRSVP": values["WeddingRSVP"],
                         "WelcomeRSVP": values["WelcomeRSVP"],
-                        "BagelsRSVP": values["BagelsRSVP"],
+                        "BrunchRSVP": values["BrunchRSVP"],
+                        "MBTAPass": values["MBTAPass"],
+                        "BlueBikesPass": values["BlueBikesPass"],
+                        "Shuttle": values["Shuttle"],
+                        "AnythingElseDietary": values["AnythingElseDietary"],
                         "Email": values["Email"],
-                        "Meal": values["Meal"],
-                        "AnythingElse": values["AnythingElse"]
+                        "Dietary": values["Dietary"]
                         })
                     AT["parties"].update(party_id, {
                         "Reply": True
@@ -282,9 +348,12 @@ def rsvp():
             if(any(a)):
                 # attending = True
                 data["attending"] = True
-            return render_template(
-                'rsvp.html',
-                data = data
-                )
+            if request.method == 'POST':
+                return redirect(url_for('wedding.home'))
+            else:
+                return render_template(
+                    'rsvp.html',
+                    data = data
+                    )
     else:
         return redirect(url_for('wedding.home'))

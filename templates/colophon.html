@@ -1,7 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="block">
-    {{data.Colophon|safe}}
+<div class="container">
+    <div class="columns">
+        <div class = "column is-8 is-offset-2">
+            <div class="card block">
+                <div class="card-content">
+                {{data.Colophon|safe}}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

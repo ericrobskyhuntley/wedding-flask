@@ -1,104 +1,191 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form method="post">
-    {% for p in data.people %}
-    <div class = "person-rsvp card block">
-        {% if p.Name %}
-        <header class="card-header">
-            <h3 class="card-header-title">{{p.Name}}</h3>
-        </header>
-        {% endif %}
-        <div class="card-content">
-            <div id = "{{p.weddingrsvp_id}}" class = "field question">
+<div class="container">
+    <div class="columns">
+        <div class = "column is-8 is-offset-2">
+        <form method="post">
+            {% for p in data.people %}
+            <div class = "person-rsvp block">
                 {% if p.Name %}
-                <label class="label">Will this person be attending the wedding?</label>
-                {% else %}
-                <label class="label">Will you be bringing a guest?</label>
+                <div class="box block has-text-centered">
+                    <p class="title">{{p.Name}}</p>
+                </div>
                 {% endif %}
-                <div class="control">
-                    <div class="select">
-                        <select name = "{{p.weddingrsvp_id}}" onchange="this.form.submit()">
-                            <option value = "None" {% if not p.WeddingRSVP %}selected{% endif %}></option>
-                            <option value = "Yes" {% if p.WeddingRSVP == "Yes" %}selected{% endif %}>Yes</option>
-                            <option value = "No" {% if p.WeddingRSVP == "No" %}selected{% endif %}>No</option>
-                        </select>
+                <div class="columns">
+                    <div class="column is-4">
+                        <p class="subtitle box">Will {{p.FirstName}} be attending...</p>
+                    </div>
+                    <div class="column is-8">
+                        <div class="box">
+                            <div id = "{{p.weddingrsvp_id}}" class = "field question">
+                                {% if p.Name %}
+                                <label class="label">...the wedding?</label>
+                                {% else %}
+                                <label class="label">Will you be bringing a guest?</label>
+                                {% endif %}
+                                <div class="control">
+                                    <div class="select">
+                                        <select name = "{{p.weddingrsvp_id}}" onchange="this.form.submit()">
+                                            <option value = "None" {% if not p.WeddingRSVP %}selected{% endif %}></option>
+                                            <option value = "Yes" {% if p.WeddingRSVP == "Yes" %}selected{% endif %}>Yes</option>
+                                            <option value = "No" {% if p.WeddingRSVP == "No" %}selected{% endif %}>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if p.WeddingRSVP == "Yes" %}
+                                {% if not p.Name %}
+                                <div id="{{p.name_id}}" class = "field question">
+                                    <label class="label">What is your guest's name?</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="{{p.name_id}}"
+                                        placeholder = "" value="{{ p.Name }}"></input>
+                                    </div>
+                                </div> 
+                                {% endif %}
+                                <div id = "{{p.welcomersvp_id}}" class = "field question">
+                                    <label class="label">...our welcome event on Friday?</label>
+                                    <div class="control">
+                                        <div class="select">
+                                            <select name = "{{p.welcomersvp_id}}"">
+                                                <option value = "None" {% if not p.WelcomeRSVP %}selected{% endif %}></option>
+                                                <option value = "Yes" {% if p.WelcomeRSVP == "Yes" %}selected{% endif %}>Yes</option>
+                                                <option value = "No" {% if p.WelcomeRSVP == "No" %}selected{% endif %}>No</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id = "{{p.brunchrsvp_id}}" class = "field question">
+                                    <label class="label">...our brunch on Sunday?</label>
+                                    <div class="control">
+                                        <div class="select">
+                                            <select name = "{{p.brunchrsvp_id}}"">
+                                                <option value = "None" {% if not p.BrunchRSVP %}selected{% endif %}></option>
+                                                <option value = "Yes" {% if p.BrunchRSVP == "Yes" %}selected{% endif %}>Yes</option>
+                                                <option value = "No" {% if p.BrunchRSVP == "No" %}selected{% endif %}>No</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>
-            {% if p.WeddingRSVP == "Yes" %}
-            {% if not p.Name %}
-            <div id="{{p.name_id}}" class = "field question">
-                <label class="label">What is your guest's name?</label>
-                <div class="control">
-                    <input class="input" type="text" name="{{p.name_id}}"
-                    placeholder = "" value="{{ p.Name }}"></input>
+                {% if p.WeddingRSVP == "Yes" %}
+                <div class="columns">
+                    <div class="column is-4">
+                        <p class="subtitle box">To make it easier for you to avoid renting a car...</p>
+                    </div>
+                    <div class="column is-8">
+                        <div class="box">
+                            <div id = "{{p.shuttle_id}}" class = "field question">
+                                <label class="label">...we may be running a shuttle between the hotels and the venue. Would {{p.FirstName}} use this?</label>
+                                <div class="control">
+                                    <div class="select">
+                                        <select name = "{{p.shuttle_id}}"">
+                                            <option value = "None" {% if not p.Shuttle %}selected{% endif %}></option>
+                                            <option value = "Yes" {% if p.Shuttle == "Yes" %}selected{% endif %}>Yes</option>
+                                            <option value = "No" {% if p.Shuttle == "No" %}selected{% endif %}>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id = "{{p.mbtapass_id}}" class = "field question">
+                                <label class="label">...we're offering each guest a 2-ride MBTA pass. Would {{p.FirstName}} use this?</label>
+                                <label class="label"><i>Keep in mind that the T is always free from Logan Airport.</i></label>
+                                <div class="control">
+                                    <div class="select">
+                                        <select name = "{{p.mbtapass_id}}"">
+                                            <option value = "None" {% if not p.MBTAPass %}selected{% endif %}></option>
+                                            <option value = "Yes" {% if p.MBTAPass == "Yes" %}selected{% endif %}>Yes</option>
+                                            <option value = "No" {% if p.MBTAPass == "No" %}selected{% endif %}>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id = "{{p.bluebikespass_id}}" class = "field question">
+                                <label class="label">...we're offering each guest a 24-hour <a href="https://www.bluebikes.com/pricing/explorer-pass">"Adventure Pass"</a> on the BlueBike bikeshare system. Would {{p.FirstName}} use this?</label>
+                                <label class="label"><i>Wear a helmet and follow traffic signals!</i></label>
+                                <div class="control">
+                                    <div class="select">
+                                        <select name = "{{p.bluebikespass_id}}"">
+                                            <option value = "None" {% if not p.BlueBikesPass %}selected{% endif %}></option>
+                                            <option value = "Yes" {% if p.BlueBikesPass == "Yes" %}selected{% endif %}>Yes</option>
+                                            <option value = "No" {% if p.BlueBikesPass == "No" %}selected{% endif %}>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div> 
+                <div class="columns">
+                    <div class="column is-4">
+                        <p class="subtitle box">To make sure that {{p.FirstName}} can share a meal with us...</p>
+                    </div>
+                    <div class="column is-8">
+                        <div class="box">
+                            <div id="{{p.dietary_id}}" class = "field question">
+                                <label class="label">...any dietary restrictions?</label>
+                                <label class="label"><i>
+                                    Hold control (on a PC) or command (on a Mac) to select multiple.</i></label>
+                                <div class="control">
+                                    <div class="select is-multiple">
+                                        <select name="{{p.dietary_id}}" multiple size="6">
+                                            <option value = "Vegetarian"  {% if "Vegetarian" in p.Dietary %}selected{% endif %}>Vegetarian</option>
+                                            <option value = "Vegan" {% if "Vegan" in p.Dietary %}selected{% endif %}>Vegan</option>
+                                            <option value = "Gluten Free" {% if "Gluten Free" in p.Dietary %}selected{% endif %}>Gluten Free</option>
+                                            <option value = "Dairy Free" {% if "Dairy Free" in p.Dietary %}selected{% endif %}>Dairy Free</option>
+                                            <option value = "Nut Free" {% if "Nut Free" in p.Dietary %}selected{% endif %}>Nut Free</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div id="{{p.anythingelsedietary_id}}" class = "field question">
+                                <label class="label">...anything else we should know?</label>
+                                <div class="control">
+                                    <input class="input" type="text" name="{{p.anythingelsedietary_id}}"
+                                            value="{{ p.AnythingElseDietary }}"></input>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if not p.Email %}
+                <div class="columns">
+                    <div class="column is-4">
+                        <p class="subtitle box">Let's keep in touch!</p>
+                    </div>
+                    <div class="column is-8">
+                        <div class="box">
+                            <div id="{{p.email_id}}" class = "field question">
+                                <label class="label">We didn't have {{p.FirstName}}'s email address.</label>
+                                <div class="control">
+                                    <input class="input" type="email" name="{{p.email_id}}"
+                                    placeholder="Enter your email address."
+                                    value="{{ request.form['email_id'] }}"></input>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% if data.attending %}
+            <div class="columns">
+                <div class="column is-8 is-offset-4">
+                    <div class="field">
+                        <div class="control rsvp-submit">
+                            <button class="button is-fullwidth" type="submit">Submit</button>
+                        </div>
+                    </div>
+                </div>
             {% endif %}
-            <div id = "{{p.welcomersvp_id}}" class = "field question">
-                <label class="label">Will this person be attending our welcome event?</label>
-                <div class="control">
-                    <div class="select">
-                        <select name = "{{p.welcomersvp_id}}"">
-                            <option value = "None" {% if not p.WelcomeRSVP %}selected{% endif %}></option>
-                            <option value = "Yes" {% if p.WelcomeRSVP == "Yes" %}selected{% endif %}>Yes</option>
-                            <option value = "No" {% if p.WelcomeRSVP == "No" %}selected{% endif %}>No</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div id = "{{p.bagelsrsvp_id}}" class = "field question">
-                <label class="label">Will this person be attending our bagel brunch on Sunday?</label>
-                <div class="control">
-                    <div class="select">
-                        <select name = "{{p.bagelsrsvp_id}}"">
-                            <option value = "None" {% if not p.BagelsRSVP %}selected{% endif %}></option>
-                            <option value = "Yes" {% if p.BagelsRSVP == "Yes" %}selected{% endif %}>Yes</option>
-                            <option value = "No" {% if p.BagelsRSVP == "No" %}selected{% endif %}>No</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div id="{{p.meal_id}}" class = "field question">
-                <label class="label">Would this person prefer a vegetarian or vegan meal?</label>
-                <div class="control">
-                    <div class="select">
-                        <select name="{{p.meal_id}}"">
-                            <option value = "None"  {% if not p.Meal %}selected{% endif %}></option>
-                            <option value = "Vegetarian" {% if p.Meal == "Vegetarian" %}selected{% endif %}>Vegetarian</option>
-                            <option value = "Vegan" {% if p.Meal == "Vegan" %}selected{% endif %}>Vegan</option>
-                        </select>
-                    </div>
-                </div>
-            </div> 
-            {% if not p.Email %}
-            <div id="{{p.email_id}}" class = "field question">
-                <label class="label">We didn't have this person's email address. Enter it if they'd like email updates.</label>
-                <div class="control">
-                    <input class="input" type="email" name="{{p.email_id}}"
-                    placeholder="Enter your email address."
-                    value="{{ request.form['email_id'] }}"></input>
-                </div>
-            </div>
-            {% endif %}
-            <div id="{{p.anythingelse_id}}" class = "field question">
-                <label class="label">Anything else we should know?</label>
-                <div class="control">
-                    <input class="input" type="text" name="{{p.anythingelse_id}}"
-                            value="{{ p.AnythingElse }}"></input>
-                </div>
-            </div>
-            {% endif %}
+        </form>
         </div>
     </div>
-    {% endfor %}
-    {% if data.attending %}
-    <div class="field">
-        <div class="control">
-            <button class="button is-large is-fullwidth is-primary" type="submit">Submit</button>
-        </div>
-    </div>
-    {% endif %}
-</form>
+</div>
 {% endblock %}

@@ -1,55 +1,77 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% for d in data.acc %}
-<div class="card block">
-    <div class="card-header">
-        <p class="card-header-title">
-            <a href="{{d.Website}}">
-                {{d.Name}}
-            </a>
-        </p>
-    </div>
-    <div class="card-content">
-        <div id="map_{{d.Slug}}" class="map"></div>
-        <div class="columns">
-            <div class="column is-4">
-                <div class="wedding-block block">
-                    Ask for the {{d.BlockName}} block.
+<div class="container">
+    <div class="columns">
+        <div class = "column is-8 is-offset-2">
+        {% for d in data.acc %}
+            <!-- <div class="card-header">
+            </div> -->
+            <div id="map_{{d.Slug}}" class="card map"></div>
+            <div class="columns">
+                <div class="column is-4">
+                    <div class="card block">
+                        <div class="card-header">
+                            <p class="card-header-title subtitle">
+                            {% if d.Website %}
+                            <a href="{{d.Website}}">{{d.Name}}</a>
+                            {% else %}
+                            {{d.Name}}
+                            {% endif %}
+                            </p>
+                        </div>
+                        <div class="card-content">
+                            {% if d.Address %}
+                            {{d.Address[0]}}
+                            {% endif %}
+                            <br>
+                            <i>
+                            {% if d.City %}
+                            {{d.City[0]}}{% if d.State %}, {{d.State[0]}}{% endif %}{% if d.Postal %} {{d.Postal[0]}}{% endif %}
+                            {% endif %}
+                            </i>
+                            <hr>
+                            <a class="button" href="{{ d.Directions }}">Get Directions</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="phone block">
-                    <code>{{d.Phone}}</code>
-                </div>
-                <div class="price block">
-                    <code>${{d.Price}} / night</code> 
+                <div class="column is-8 block">
+                    <div class="card block">
+                        <div class="card-footer">
+                            <div class="card-footer-item">
+                                ${{d.Price}} Per Night
+                            </div>
+                            <div class="card-footer-item">
+                                {{d.Phone}}
+                            </div>
+                            <div class="card-footer-item">
+                                <a class="button" href="{{ d.BookingLink}}">Book This Hotel</a>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            {{d.Description|safe}}
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="column is-8">
-                {% if d.Address %}
-                {{d.Address[0]}}
-                {% endif %}
-                <br>
-                <i>
-                {% if d.City %}
-                {{d.City[0]}}{% if d.State %}, {{d.State[0]}}{% endif %}{% if d.Postal %} {{d.Postal[0]}}{% endif %}
-                {% endif %}
-                </i>
-                <hr>
-                {{d.Description|safe}}
-            </div>
+        {% endfor %}
         </div>
     </div>
 </div>
-{% endfor %}
 <script id = "map_generator">{% for d in data.acc %}
     const {{d.Slug}} = new maplibregl.Map({
         container: 'map_{{ d.Slug }}',
         style: 'https://api.maptiler.com/maps/39c06a26-0b36-4c9a-8467-62e0402dc331/style.json?key=TW5HwRPrq8DTWuAQ0Lmj',
         center: [{{ d.Lng[0] }}, {{ d.Lat[0] }}],
-        zoom: 14
+        zoom: 14,
+        minZoom: 12,
+        maxZoom: 20,
+        maplibreLogo: true,
+        maxBounds: [[-71.16394, 42.34783], [-71.0354, 42.43428]]
     });
-    new maplibregl.Marker()
-        .setLngLat([{{ d.Lng[0] }}, {{ d.Lat[0] }}])
+    new maplibregl.Marker({
+            color: "#daa520"
+        }).setLngLat([{{ d.Lng[0] }}, {{ d.Lat[0] }}])
         .addTo({{d.Slug}});
     {% endfor %}
 </script>

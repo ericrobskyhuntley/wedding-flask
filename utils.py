@@ -25,3 +25,14 @@ def email_confirm(app, guest_list, meta):
 
     msg.body = _("email/confirmation.txt")
     mail.send(msg)
+
+def address_if_blank(existing, new_col, new_dict, concat_string = ", "):
+    """
+    concatenates values of a dict based on whether value exists.
+    """
+    if new_col in new_dict:
+        if len(existing) > 0:
+            existing = existing + concat_string + new_dict[new_col]
+        else:
+            existing = new_dict[new_col]
+    return existing

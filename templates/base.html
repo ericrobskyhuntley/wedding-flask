@@ -14,21 +14,6 @@
 		crossorigin="anonymous"></script>
     <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
-    <style>
-        {% if not data["Published"] %}
-        html{
-            background:#a60a3d;
-        }
-
-        .hero .card .title {
-            color:white;
-        }
-
-        .hero .card .subtitle {
-            color:white;
-        }
-        {% endif %}
-    </style>
 </head>
 <body class="is-family-sans-serif">
     {% if not data["Published"] %}

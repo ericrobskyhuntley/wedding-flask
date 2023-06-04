@@ -32,7 +32,7 @@
 </head>
 <body class="is-family-sans-serif">
     {% if not data["Published"] %}
-    <div id="bg" style="background: url('{{data["UnderConstructionImage"][0].url}}') no-repeat center center; background-size: cover;"></div>
+    <div id="bg" style="background: url({{url_for('static',filename='green_line.mp4')}}) no-repeat center center; background-size: cover;"></div>
     {% endif %}
     <section id="header" class="section">
         <div class="container">

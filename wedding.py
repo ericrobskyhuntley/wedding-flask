@@ -8,8 +8,7 @@ from pyairtable.formulas import match, FIELD, FIND, STR_VALUE, OR, EQUAL
 from itertools import groupby
 from operator import itemgetter
 from app import AT, META, dt_parse
-
-from utils import address_if_blank
+    from ics import Calendar, Event
 
 # from utils import email_confirm
 
@@ -37,7 +36,6 @@ def home():
         )
 
 def process_events(events):
-    from ics import Calendar, Event
     d = []
     for e in events:
         e = e['fields']

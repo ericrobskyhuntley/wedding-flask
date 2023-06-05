@@ -104,24 +104,31 @@ hr {
 .title > a {
     color: inherit;
 } */
+
+.welcome-message{
+    position: absolute;
+    font-family: serif;
+    font-style:italic;
+}
+
 @media screen and (max-width: 980px) {
     .welcome-message {
-        position: absolute;
-        font-family: serif;
-        font-style:italic;
         margin-top:0.5rem;
     }
 }
 @media (min-width: 980px) {
     .welcome-message {
-        position: absolute;
         top: 70%;
         left: 30%;
         transform: translate(-20%, -50%);
-        font-family: serif;
-        font-style:italic;
     }
 }
+
+.caption {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+  }
 
 .welcome-message p {
     padding: 0.25rem;
@@ -208,6 +215,7 @@ a {
 
 .luminosity-blend {
     mix-blend-mode: luminosity;
+    padding-bottom: 8rem;
 }
 
 .image-overlay {

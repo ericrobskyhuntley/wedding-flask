@@ -29,7 +29,7 @@ def home_redirect():
 @wedding.route('/home')
 def home():
     data = META
-    data["Path"] = request.path
+    META["Path"] = request.path
     return render_template(
         'home.html', 
         data = data
@@ -106,7 +106,7 @@ def compose_formula(list, field):
 def itinerary():
     if META["Published"]:
         data = META
-        data['Path'] = request.path
+        META['Path'] = request.path
         if current_user.is_authenticated:
             person = AT["people"].get(current_user.id).get("fields")
             if "GroupNames" in person:
@@ -161,7 +161,7 @@ def itinerary():
 def qa():
     if META["Published"]:
         data = META
-        data["Path"] = request.path
+        META["Path"] = request.path
         d = []
         for i in AT["qa"].all(formula=EQUAL(1, FIELD("Publish"))):
             i = i['fields']
@@ -180,7 +180,7 @@ def qa():
 def accommodations():
     if META["Published"]:
         data = META
-        data["Path"] = request.path
+        META["Path"] = request.path
         acc = []
         for a in AT["accommodations"].all(formula=EQUAL(1, FIELD("Listed"))):
             a = a['fields']
@@ -208,7 +208,7 @@ def accommodations():
 def getting_around():
     if META["Published"]:
         data = META
-        data["Path"] = request.path
+        META["Path"] = request.path
         data['GettingAround'] = markdown(
             AT['meta'].first(
                 fields = ['GettingAround']
@@ -226,7 +226,7 @@ def getting_around():
 def things_to_do():
     if META["Published"]:
         data = META
-        data["Path"] = request.path
+        META["Path"] = request.path
         return render_template(
             'travel.html', 
             data = data
@@ -239,7 +239,7 @@ def things_to_do():
 def colophon():
     if META["Published"]:
         data = META
-        data["Path"] = request.path
+        META["Path"] = request.path
         data['Colophon'] = markdown(
             AT['meta'].first(fields=['Colophon'])['fields']['Colophon']
             )
@@ -286,7 +286,7 @@ def check_form(field, values, request):
 def rsvp():
     if META["Published"]:
         data = META
-        data['Path'] = request.path
+        META['Path'] = request.path
         a = []
         data["attending"] = False
         if not current_user.is_authenticated:
@@ -295,11 +295,13 @@ def rsvp():
             party_id = AT["people"].get(current_user.id)["fields"]["Party"][0]
             data["people"] = []
             data["party"] = AT["parties"].get(party_id)["fields"]
+            rsvp_update = []
             for p in data["party"]['People']:
                 values = {}
                 person = AT["people"].get(p)
                 values["id"] = person["id"]
                 person = person["fields"]
+                wedding_rsvp = person["WeddingRSVP"]
 
                 if "Name" in person:
                     person["FirstName"] = person["Name"].split(" ", 1)[0]
@@ -323,6 +325,7 @@ def rsvp():
                         values = check_form(field, values, request)
                     for field in list_fields:
                         values = check_form_list(field, values, request)
+                    rsvp_update.append(wedding_rsvp != values["WeddingRSVP"])
                     AT["people"].update(values["id"], {
                         "Name": values["Name"],
                         "WeddingRSVP": values["WeddingRSVP"],
@@ -346,10 +349,11 @@ def rsvp():
             if(any(a)):
                 # attending = True
                 data["attending"] = True
-            else:
-                return render_template(
-                    'rsvp.html',
-                    data = data
-                    )
+            if (request.method == 'POST') and not any(rsvp_update):
+                return redirect(url_for('wedding.home'))
+            return render_template(
+                'rsvp.html',
+                data = data
+                )
     else:
         return redirect(url_for('wedding.home'))

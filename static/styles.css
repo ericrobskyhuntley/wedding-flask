@@ -126,7 +126,7 @@ hr {
 
 .caption {
     position: absolute;
-    bottom: 0.5rem;
+    top: 0.5rem;
     left: 0.5rem;
   }
 
@@ -225,10 +225,6 @@ a {
 img.hover-hidden {
     visibility: hidden;
     pointer-events: none;
-}
-
-.image-caption {
-    margin-bottom: -3rem;
 }
 
 div.hover-revealer {

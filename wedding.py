@@ -304,7 +304,6 @@ def rsvp():
                 person = AT["people"].get(p)
                 values["id"] = person["id"]
                 person = person["fields"]
-                wedding_rsvp = person["WeddingRSVP"]
 
                 if "Name" in person:
                     person["FirstName"] = person["Name"].split(" ", 1)[0]
@@ -323,6 +322,7 @@ def rsvp():
                 
                 for field in list_fields:
                     values = check_none(field, person, values, none_val = [])
+                wedding_rsvp = values["WeddingRSVP"]
                 if request.method == 'POST':
                     for field in text_fields + choice_fields:
                         values = check_form(field, values, request)

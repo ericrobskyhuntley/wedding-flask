@@ -13,6 +13,10 @@ hr {
     border-top: 0.5px solid rgba(166, 10, 61, 1.0);
 }
 
+.date-chunk .box .heading {
+    color: rgba(166, 10, 61, 1.0);
+}
+
 #header, #header a {
     color: rgba(166, 10, 61, 1.0);
 }

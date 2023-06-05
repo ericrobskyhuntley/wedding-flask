@@ -140,7 +140,7 @@ def itinerary():
                         if i.get("DressCode") == "Feel-Good Festive":
                             i["DressCodeDesc"] = "Wear whatever puts you in the mood to celebrate. No jeans, no tuxes. Dancing shoes."
                         date_event_names.append(i['Name'])
-                        d['DateDesc'] = ', '.join(date_event_names)
+                        d['DateDesc'] = ' ◦ '.join(date_event_names)
                         es.append(i)
                     venue['Slug'] = v['VenueName'].lower().replace(' ', '_').replace("'", '_')
                     venue["Events"] = es

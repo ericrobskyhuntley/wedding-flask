@@ -35,7 +35,4 @@ def login():
 @login_required
 def logout():
     logout_user()
-    if META["Path"] in [url_for('wedding.rsvp'), url_for('wedding.itinerary')]:
-        return redirect(url_for('wedding.home'))
-    else:
-        return redirect(META["Path"])
+    return redirect(url_for('wedding.home'))

@@ -30,6 +30,19 @@ hr {
 }
 
 
+/* .welcome {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+
+.welcome-center {
+    margin: 50vh auto 0;
+    transform: translateY(-50%);
+}
+
+
+
 #body .container {
     z-index: 30;
     margin-bottom: 6rem;
@@ -91,6 +104,28 @@ hr {
 .title > a {
     color: inherit;
 } */
+@media screen and (max-width: 980px) {
+    .welcome-message {
+        position: absolute;
+        font-family: serif;
+        font-style:italic;
+        margin-top:0.5rem;
+    }
+}
+@media (min-width: 980px) {
+    .welcome-message {
+        position: absolute;
+        top: 75%;
+        left: 30%;
+        transform: translate(-20%, -50%);
+        font-family: serif;
+        font-style:italic;
+    }
+}
+
+.welcome-message p {
+    padding: 0.25rem;
+}
 
 .navbar .navbar-menu {
     flex-grow: initial;

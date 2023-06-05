@@ -30,6 +30,9 @@ def home_redirect():
 def home():
     data = META
     META["Path"] = request.path
+    data['LandingText'] = markdown(
+        AT['meta'].first(fields=['LandingText'])['fields']['LandingText']
+        )
     return render_template(
         'home.html', 
         data = data

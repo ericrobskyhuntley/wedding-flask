@@ -158,6 +158,15 @@ a {
     color: rgba(166, 10, 61, 1.0);
 }
 
+.modal-content .card {
+    background: rgba(166, 10, 61, 1.0);
+}
+
+.modal-content .card .label {
+    color: white;
+}
+
+
 .luminosity-blend {
     mix-blend-mode: luminosity;
 }

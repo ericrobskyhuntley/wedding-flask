@@ -58,11 +58,13 @@ app.register_blueprint(wedding_bp)
 from auth import auth as auth_bp
 app.register_blueprint(auth_bp)
 
-# app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
-# app.config["MAIL_PORT"] = os.getenv("MAIL_PORT")
-# app.config["MAIL_USE_SSL"] = os.getenv("MAIL_USE_SSL")
-# app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
-# app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+app.config.update(
+    MAIL_SERVER = os.getenv("MAIL_SERVER"),
+    MAIL_PORT = os.getenv("MAIL_PORT"),
+    MAIL_USE_SSL = True,
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME"),
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 login_manager = LoginManager()

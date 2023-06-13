@@ -1,0 +1,34 @@
+<div class="header">
+    <p class="title">
+        <a href="{{ url_for('wedding.home')}}">{{meta['ShortNames'] | join(" & ")}}</a>
+    </p>
+    <p class="heading">
+        {% for d in meta['UniqueDates'] %}
+            {{d.strftime('%B %d, %Y')}}
+            {% if not loop.last %} - {% endif %}
+        {% endfor %} ◦ {% for c in meta['CityStates'] %}
+        {{c}}
+        {% if not loop.last %}
+        &
+        {% endif %}
+        {% endfor %}
+    </p>
+</div>
+<hr/>
+<div class="body">
+    <p>Hello,</p>
+    
+    </p>Thanks for your RSVP!</p>
+    {% if yes %} 
+    <p>We're ALREADY looking forward to celebrating with {% for y in yes %}{{ " and " if (loop.last) and (yes|length > 1) else "" }}{{y}}{{ ", " if (not loop.last) and (yes|length > 2) else "" }}{% endfor %}.</p>
+    {% endif %}
+    {% if no %} 
+    <p>We regret that {% for y in yes %}{{ " and " if (loop.last) and (yes|length > 1) else "" }}{{y}}{{ ", " if (not loop.last) and (yes|length > 2) else "" }}{% endfor %} will not be joining us---we hope to see you soon!.</p>
+    {% endif %}
+    {% if yes %}
+    <p>We'll be in touch as the day approaches.</p>
+    {% endif %}
+    <p>Be well,<br/>
+    Talia & Eric
+    </p>
+</div>

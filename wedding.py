@@ -1,5 +1,5 @@
 
-from flask import render_template, request, url_for, redirect, Blueprint
+from flask import render_template, request, url_for, redirect, Blueprint, flash
 from flask_login import current_user
 
 from markdown import markdown
@@ -7,10 +7,10 @@ from slugify import slugify
 from pyairtable.formulas import match, FIELD, FIND, STR_VALUE, OR, EQUAL
 from itertools import groupby
 from operator import itemgetter
-from app import AT, META, dt_parse
+from app import AT, META, dt_parse, app
 from ics import Calendar, Event
 
-# from utils import email_confirm
+from utils import email_confirm
 
 META["Path"] = None
 
@@ -299,6 +299,9 @@ def rsvp():
             data["people"] = []
             data["party"] = AT["parties"].get(party_id)["fields"]
             rsvp_update = []
+            emails = []
+            yesses = []
+            nos = []
             for p in data["party"]['People']:
                 values = {}
                 person = AT["people"].get(p)
@@ -345,14 +348,27 @@ def rsvp():
                         "Reply": True
                     })
                 data["people"].append(values)
+                emails.append(values["Email"])
                 if values["WeddingRSVP"] == "Yes":
                     a.append(True)
+                    yesses.append(values["Name"])
                 else:
                     a.append(False)
+                    nos.append(values["Name"])
+
             if(any(a)):
-                # attending = True
                 data["attending"] = True
+            # Removes empty strings (i.e., unknown emails).
+            emails = [i for i in emails if i]
             if (request.method == 'POST') and not any(rsvp_update):
+                if len(emails) > 0:
+                    email_confirm(app, yes = yesses, no = nos, recipients = emails)
+                    msg = f"""We recorded your response!
+                    You should receive email confirmation at
+                    {' and '.join(emails)}."""
+                else:
+                    msg = "We recorded your response!"
+                flash(msg)
                 return redirect(url_for('wedding.home'))
             return render_template(
                 'rsvp.html',

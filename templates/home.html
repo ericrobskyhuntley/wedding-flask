@@ -1,6 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
 
+{% with messages = get_flashed_messages() %} 
+{% if messages %}
+<div class="modal rsvp is-active">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="card block">
+            <div class="card-content">
+                <div class="card-header">
+                    {% for message in messages %}
+                    <p class="card-header-title label">{{ message }}</p>
+                    {% endfor %}
+                </div>
+                <div class="card-footer">
+                    <div class="card-footer-item">
+                        <button class="button close-modal is-small is-outlined" type="button">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endwith %}
 <div class="container luminosity-blend">
     <div class="columns">
         <!-- <section class="hero is-link is-fullheight-with-navbar">

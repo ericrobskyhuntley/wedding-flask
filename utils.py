@@ -1,30 +1,34 @@
 from flask_mail import Mail, Message
 from flask import render_template
 from functools import partial
+from app import META
+import os
 
-def email_confirm(app, guest_list, meta):
+def email_confirm(app, yes , no, recipients):
     mail = Mail(app)
 
-    msg = Message(
-        "Thanks for your RSVP!",
-        sender = "ericrobskyhuntley@gmail.com",
-        reply_to = "ericrobskyhuntley@gmail.com,tmfox09@gmail.com"
+    rsvp = Message(
+        f"{' & '.join(META['ShortNames'])} | Thanks for your RSVP!",
+        sender = os.getenv("MAIL_USERNAME"),
+        cc = [os.getenv("MAIL_USERNAME")],
+        recipients = recipients
         )
 
     # if app.config["DEBUG"]:
-    msg.recipients = ['ericrobskyhuntley@gmail.com']
+    #     msg.recipients = ['ericrobskyhuntley@gmail.com']
     # else:
-    #     msg.recipients = [form["email"]]
-    #     msg.cc = ["wedding@davenquinn.com"]
+        # msg.recipients = [form["email"]]
+        # msg.cc = ["wedding@davenquinn.com"]
 
     _ = partial(
         render_template,
-        guest_list = guest_list,
-        meta = meta
+        yes = yes,
+        no = no,
+        meta = META
         )
 
-    msg.body = _("email/confirmation.txt")
-    mail.send(msg)
+    rsvp.html = _("rsvp_conf.html")
+    mail.send(rsvp)
 
 def address_if_blank(existing, new_col, new_dict, concat_string = ", "):
     """

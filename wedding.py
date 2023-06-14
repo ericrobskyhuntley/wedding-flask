@@ -351,10 +351,10 @@ def rsvp():
                 emails.append(values["Email"])
                 if values["WeddingRSVP"] == "Yes":
                     a.append(True)
-                    yesses.append(values["Name"])
+                    yesses.append(values["FirstName"])
                 else:
                     a.append(False)
-                    nos.append(values["Name"])
+                    nos.append(values["FirstName"])
 
             if(any(a)):
                 data["attending"] = True

@@ -29,6 +29,7 @@ def email_confirm(app, yes , no, recipients):
 
     rsvp.html = _("rsvp_conf.html")
     mail.send(rsvp)
+    return
 
 def address_if_blank(existing, new_col, new_dict, concat_string = ", "):
     """

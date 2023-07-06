@@ -145,7 +145,8 @@ def itinerary():
                         date_event_names.append(i['Name'])
                         d['DateDesc'] = ' ◦ '.join(date_event_names)
                         es.append(i)
-                    venue['Slug'] = v['VenueName'].lower().replace(' ', '_').replace("'", '_')
+                    import re
+                    venue['Slug'] = re.sub('[^0-9a-zA-Z]+', '_', v['VenueName'].lower())
                     venue["Events"] = es
                     venues.append(venue)
                 d['Venues'] = venues

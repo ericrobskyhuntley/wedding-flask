@@ -74,9 +74,9 @@
                                 <hr/>
                                 {% for role in event.Artists.keys() %}
                                     {{role}} by 
-                                    {% if event.Artists[role]|length==1%}{% for artist in event.Artists[role] %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>.{% endfor %}{% endif %}
-                                    {% if event.Artists[role]|length==2%}{% for artist in event.Artists[role] %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>{% if not loop.last %} and {% else %}.{%endif%}{% endfor %}{% endif %}
-                                    {% if event.Artists[role]|length>2%}{% for artist in event.Artists[role] %}{% if loop.last %} and {% endif %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>{% if not loop.last %}, {% else %}.{%endif%}{% endfor %}{% endif %}
+                                    {% if event.Artists[role]|length==1%}{% for artist in event.Artists[role] %}{% if artist.Website %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>{% else %}{{ artist.Name }}{% endif %}.{% endfor %}{% endif %}
+                                    {% if event.Artists[role]|length==2%}{% for artist in event.Artists[role] %}{% if artist.Website %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>{% else %}{{ artist.Name }}{% endif %}{% if not loop.last %} and {% else %}.{% endif %}{% endfor %}{% endif %}
+                                    {% if event.Artists[role]|length>2%}{% for artist in event.Artists[role] %}{% if loop.last %} and {% endif %}{% if artist.Website %}<a href="{{ artist.Website }}">{{ artist.Name }}</a>{% else %}{{ artist.Name }}{% endif %}{% if not loop.last %}, {% else %}.{%endif%}{% endfor %}{% endif %}
                                 {% endfor %}
                                 {% endif %}
                                 <hr/>

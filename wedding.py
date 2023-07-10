@@ -354,7 +354,7 @@ def rsvp():
                 if values["WeddingRSVP"] == "Yes":
                     a.append(True)
                     yesses.append(values["FirstName"])
-                else:
+                elif values["FirstName"] != "this person":
                     a.append(False)
                     nos.append(values["FirstName"])
 

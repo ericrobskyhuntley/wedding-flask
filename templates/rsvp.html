@@ -14,7 +14,9 @@
                 {% endif %}
                 <div class="columns">
                     <div class="column is-4">
+                        {% if p.Name %}
                         <p class="subtitle box">Will {{p.FirstName}} be attending...</p>
+                        {% endif %}
                     </div>
                     <div class="column is-8">
                         <div class="box">

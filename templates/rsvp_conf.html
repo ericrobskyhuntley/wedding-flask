@@ -23,7 +23,7 @@
     <p>We're ALREADY looking forward to celebrating with you, {% for y in yes %}{{ " and " if (loop.last) and (yes|length > 1) else "" }}{{ y }}{{ ", " if (not loop.last) and (yes|length > 2) else "" }}{% endfor %}.</p>
     {% endif %}
     {% if no %} 
-    <p>We'll miss you, {% for y in yes %}{{ " and " if (loop.last) and (yes|length > 1) else "" }}{{ y }}{{ ", " if (not loop.last) and (yes|length > 2) else "" }}{% endfor %}! Hope to see you soon!</p>
+    <p>We'll miss you, {% for n in no %}{{ " and " if (loop.last) and (no|length > 1) else "" }}{{ n }}{{ ", " if (not loop.last) and (yes|length > 2) else "" }}{% endfor %}! Hope to see you soon!</p>
     {% endif %}
     {% if yes %}
     <p>We'll be in touch with more information as the day approaches.</p>

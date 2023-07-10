@@ -191,6 +191,7 @@ def accommodations():
             a['Name'] = a['Name'][0]
             a['Slug'] = a['Name'].lower().replace(' ', '_').replace("'", '_')
             a['Website'] = a['Website'][0]
+            a['Deadline'] = dt_parse(a['Deadline'])
             a['Description'] = markdown(a['Description'])
             add = ""
             add = a.get("Address")[0]

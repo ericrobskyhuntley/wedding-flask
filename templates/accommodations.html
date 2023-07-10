@@ -29,9 +29,10 @@
                             {% if d.City %}
                             {{d.City[0]}}{% if d.State %}, {{d.State[0]}}{% endif %}{% if d.Postal %} {{d.Postal[0]}}{% endif %}
                             {% endif %}
-                            </i>
+                            </i><br>
+                            {{d.Phone}}
                             <hr>
-                            <a class="button" href="{{ d.Directions }}">Get Directions</a>
+                            <a href="{{ d.Directions }}">Get Directions</a>
                         </div>
                     </div>
                 </div>
@@ -39,13 +40,23 @@
                     <div class="card block">
                         <div class="card-footer">
                             <div class="card-footer-item">
-                                ${{d.Price}} Per Night
-                            </div>
-                            <div class="card-footer-item">
-                                {{d.Phone}}
-                            </div>
-                            <div class="card-footer-item">
                                 <a class="button" href="{{ d.BookingLink}}">Book This Hotel</a>
+                            </div>
+                            <div class="card-footer-item">
+                                <i>↤ Book here to secure discount!</i>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-footer-item">
+                                Reserve by {{d.Deadline.strftime('%B %d, %Y')}}
+                            </div>
+                            <div class="card-footer-item">
+                                ${{d.Price}} / Night
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-footer-item">
+                                Parking is ${{d.ParkingPrice}} / Night
                             </div>
                         </div>
                         <div class="card-content">

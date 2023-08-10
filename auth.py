@@ -11,8 +11,9 @@ def login():
     e = None
     if request.method == 'POST':
         name = request.form.get('name')
+        name_prepared = name.replace(" ", "").replace("-", "").lower()
         if name:
-            person = AT["people"].first(formula = match({"Name": name}))
+            person = AT["people"].first(formula = match({"Slug": name_prepared}))
             if (not person) or ("Party" not in person["fields"]):
                 e = "Name not found. Did you misspell something?"
             else:

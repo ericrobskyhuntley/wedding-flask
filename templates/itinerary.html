@@ -70,6 +70,13 @@
                             </div>
                             <div class = "card-content">
                                 <p>{{event.Description|safe}}</p>
+                                {% if event.GettingThere|length > 1 %}
+                                    <hr/>
+                                    <div class="has-text-weight-bold">
+                                        Getting There
+                                    </div>
+                                    {{event.GettingThere|safe}}
+                                {% endif %}
                                 {% if event.Artists %}
                                 <hr/>
                                 {% for role in event.Artists.keys() %}

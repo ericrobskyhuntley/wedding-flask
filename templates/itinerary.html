@@ -51,7 +51,7 @@
                             </div>
                             <div class = "card-footer">
                                 <div class="card-footer-item">
-                                    <p>{{event.StartTime.strftime('%-I:%M %p')}}–{{event.EndTime.strftime('%-I:%M %p')}}</p>
+                                    <p>{{event.StartTime.strftime('%-I:%M %p')}}{% if event.EndTime != event.StartTime %}–{{event.EndTime.strftime('%-I:%M %p')}}{% endif %}</p>
                                 </div>
                                 <div class="card-footer-item">
                                     <div class="dropdown is-hoverable dress-code" id="dress_code_{{event.Slug}}">

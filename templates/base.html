@@ -53,13 +53,16 @@
                     <a class="navbar-item" href="{{ url_for('wedding.rsvp') }}">RSVP</a>
                     <a class="navbar-item" href="{{ url_for('wedding.itinerary') }}">Itinerary</a>
                     <a class="navbar-item" href="{{ url_for('wedding.accommodations') }}">Accommodations</a>
-                    <!-- <div class="navbar-item has-dropdown is-hoverable">
-                        <a class="navbar-link">Travel</a>
+                    {% if data["ThingsToDo"] %}
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">Things to Do</a>
                         <div class="navbar-dropdown">
-                            <a class="navbar-item" href="{{ url_for('wedding.getting_around') }}">Getting Around</a>
-                            <a class="navbar-item" href="{{ url_for('wedding.things_to_do') }}">Things to Do</a>
+                            {% for thing in data["ThingsToDo"] %}
+                            <a class="navbar-item" href="{{thing.fields.URL}}">{{thing.fields.Name}}</a>
+                            {% endfor %}
                         </div>
-                    </div> -->
+                    </div>
+                    {% endif %}
                     <a class="navbar-item" href="{{ data['Registry'] }}">Registry</a>
                     <a class="navbar-item" href="{{ url_for('wedding.qa') }}">Q & A</a>
                     <a class="navbar-item" href="{{ url_for('wedding.colophon') }}">Colophon</a>

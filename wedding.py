@@ -180,7 +180,7 @@ def qa():
     else:
         return redirect(url_for('wedding.home'))
 
-@wedding.route('/travel/accommodations')
+@wedding.route('/accommodations')
 def accommodations():
     if META["Published"]:
         data = META
@@ -203,37 +203,6 @@ def accommodations():
         data['acc'] = acc
         return render_template(
             'accommodations.html', 
-            data = data
-            )
-    else:
-        return redirect(url_for('wedding.home'))
-
-
-@wedding.route('/travel/getting-around/')
-def getting_around():
-    if META["Published"]:
-        data = META
-        META["Path"] = request.path
-        data['GettingAround'] = markdown(
-            AT['meta'].first(
-                fields = ['GettingAround']
-                )['fields']['GettingAround']
-            )
-        return render_template(
-            'getting-around.html',
-            data = data
-            )
-    else:
-        return redirect(url_for('wedding.home'))
-
-
-@wedding.route('/travel/things-to-do/')
-def things_to_do():
-    if META["Published"]:
-        data = META
-        META["Path"] = request.path
-        return render_template(
-            'travel.html', 
             data = data
             )
     else:

@@ -14,12 +14,6 @@ def email_confirm(app, yes , no, recipients):
         recipients = recipients
         )
 
-    # if app.config["DEBUG"]:
-    #     msg.recipients = ['ericrobskyhuntley@gmail.com']
-    # else:
-        # msg.recipients = [form["email"]]
-        # msg.cc = ["wedding@davenquinn.com"]
-
     _ = partial(
         render_template,
         yes = yes,

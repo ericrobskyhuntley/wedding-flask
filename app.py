@@ -26,7 +26,7 @@ AT = {
     "meta": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Meta"),
     "vendors": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Vendors"),
     "accommodations": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Accommodations"),
-    "accommodations": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "ThingsToDo")
+    "thingsToDo": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "ThingsToDo")
 }
 
 META = AT["meta"].first(
@@ -41,9 +41,7 @@ META = AT["meta"].first(
 META["CityStates"] = unique([c + ", " + s for c, s in zip(META["Cities"], META["States"])])
 META['UniqueDates'] = unique([dt_parse(dt).date() for dt in META['Times']])
 META['ShortNames'] = [n.split()[0] for n in META['Names']]
-META['ThingsToDo'] = AT['accommodations'].all()
-
-print(META['ThingsToDo'])
+META['ThingsToDo'] = AT['thingsToDo'].all()
 
 # Remove extraneous keys.
 for key in ["Cities", "States", "Times"]:

@@ -4,7 +4,7 @@ from flask_login import current_user
 
 from markdown import markdown
 from slugify import slugify
-from pyairtable.formulas import match, FIELD, FIND, STR_VALUE, OR, EQUAL
+from pyairtable.formulas import match, Field, FIND, OR, EQ
 from itertools import groupby
 from operator import itemgetter
 from app import AT, META, dt_parse, app
@@ -101,8 +101,8 @@ def process_events(events):
 def compose_formula(list, field):
     f = []
     for term in list:
-        f.append(FIND(STR_VALUE(term), 'ARRAYJOIN(' + FIELD(field) + ')'))
-    f.append(EQUAL(0, FIELD(field)))
+        f.append(str(FIND(term, 'ARRAYJOIN(' + str(Field(field)) + ')')))
+    f.append(str(EQ(0, Field(field))))
     return OR(','.join(f))
 
 @wedding.route('/itinerary')
@@ -115,7 +115,7 @@ def itinerary():
             if "GroupNames" in person:
                 formula = compose_formula(person["GroupNames"], "LimitedInviteNames")
             else:
-                formula = EQUAL(0, FIELD("LimitedInviteNames"))
+                formula = EQ(0, Field("LimitedInviteNames"))
             events = AT["events"].all(formula = formula, sort = ["StartTime"])
             
             itinerary = []
@@ -167,7 +167,7 @@ def qa():
         data = META
         META["Path"] = request.path
         d = []
-        for i in AT["qa"].all(formula=EQUAL(1, FIELD("Publish"))):
+        for i in AT["qa"].all(formula=EQ(1, Field("Publish"))):
             i = i['fields']
             i['Question'] = markdown(i['Question'])
             i['Answer'] = markdown(i['Answer'])
@@ -186,7 +186,7 @@ def accommodations():
         data = META
         META["Path"] = request.path
         acc = []
-        for a in AT["accommodations"].all(formula=EQUAL(1, FIELD("Listed"))):
+        for a in AT["accommodations"].all(formula=EQ(1, Field("Listed"))):
             a = a['fields']
             a['Name'] = a['Name'][0]
             a['Slug'] = a['Name'].lower().replace(' ', '_').replace("'", '_')

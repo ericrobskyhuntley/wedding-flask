@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_login import LoginManager
-from pyairtable import Base, Table
+from pyairtable import Api
 
 from typing import Optional
 from datetime import datetime, timezone
@@ -8,8 +8,11 @@ from markdown import markdown
 import pytz
 import os
 
+
 from dotenv import load_dotenv
 load_dotenv()
+
+api = Api(os.getenv("AT_KEY"))
 
 def unique(l):
     return list(set(l))
@@ -18,15 +21,15 @@ def dt_parse(string):
     return datetime.strptime(string, "%Y-%m-%dT%H:%M:%S.000Z").replace(tzinfo=timezone.utc).astimezone(pytz.timezone('America/New_York'))
 
 AT = {
-    "venues": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Venues"),
-    "events": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Events"),
-    "people": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "People"),
-    "parties": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Parties"),
-    "qa": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "QA"),
-    "meta": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Meta"),
-    "vendors": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Vendors"),
-    "accommodations": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "Accommodations"),
-    "thingsToDo": Table(os.getenv("AT_KEY"), os.getenv("AT_BASE_ID"), "ThingsToDo")
+    "venues": api.table(os.getenv("AT_BASE_ID"), "Venues"),
+    "events": api.table(os.getenv("AT_BASE_ID"), "Events"),
+    "people": api.table(os.getenv("AT_BASE_ID"), "People"),
+    "parties": api.table(os.getenv("AT_BASE_ID"), "Parties"),
+    "qa": api.table(os.getenv("AT_BASE_ID"), "QA"),
+    "meta": api.table(os.getenv("AT_BASE_ID"), "Meta"),
+    "vendors": api.table(os.getenv("AT_BASE_ID"), "Vendors"),
+    "accommodations": api.table(os.getenv("AT_BASE_ID"), "Accommodations"),
+    "thingsToDo": api.table(os.getenv("AT_BASE_ID"), "ThingsToDo")
 }
 
 META = AT["meta"].first(

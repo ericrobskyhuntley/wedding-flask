@@ -28,5 +28,5 @@ TatSu==5.8.3
 text-unidecode==1.3
 typing==3.7.4.3
 typing_extensions==4.12.2
-urllib3==1.26.14
+urllib3==1.26.19
 Werkzeug==3.1.3

@@ -12,7 +12,7 @@ ics==0.7.2
 idna==3.7
 inflection==0.5.1
 itsdangerous==2.2.0
-Jinja2==3.1.2
+Jinja2==3.1.6
 Markdown==3.4.1
 MarkupSafe==2.1.2
 pyairtable==3.0.1

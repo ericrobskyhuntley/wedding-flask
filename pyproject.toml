@@ -11,6 +11,6 @@ dependencies = [
     "ics==0.7.2",
     "markdown==3.4.1",
     "pyairtable==3.0.1",
-    "python-slugify==8.0.0",
+    "python-slugify==8.0.4",
     "tatsu<5.10",
 ]

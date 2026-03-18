@@ -422,11 +422,11 @@ wheels = [
 
 [[package]]
 name = "tatsu"
-version = "5.9.2"
+version = "5.17.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c2/5c/9909cb1ef331982392e01ce4344b74927f173561316e67db46244b2ae4f4/TatSu-5.9.2.tar.gz", hash = "sha256:08cd6e6cb55e9b401ff0eab24b13c091ff4009d3214523a78c47c344c092a317", size = 147099, upload-time = "2023-10-26T16:05:40.388Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/36/78/7a5b45eba65aa101f446caed391d2141d1f0267e501cf1f13cfab3e98780/tatsu-5.17.1.tar.gz", hash = "sha256:8b11e732206463f31cad57729da6aa60846aa680bdb0c0b64339a8ac7cb6ebb4", size = 313266, upload-time = "2026-02-21T00:29:03.09Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/08/16/38d819ded1993a1ebc86099f4859ed795216c804ec02f5e21918f7f24a21/TatSu-5.9.2-py3-none-any.whl", hash = "sha256:d9e7cf271f7f4f76b0fa2a670cd224ef9d8f2bb227a081d70d9e8974d0436fc6", size = 101126, upload-time = "2023-10-26T16:05:38.5Z" },
+    { url = "https://files.pythonhosted.org/packages/18/9d/be290eb415481050a7ee7c237750a0efb0816fbdde75166277eb7485f652/tatsu-5.17.1-py3-none-any.whl", hash = "sha256:e71f2bea8408fe4e1d778269c5d4cd4b7b76bec466068e115db4cd57605592fb", size = 128514, upload-time = "2026-02-21T00:29:01.379Z" },
 ]
 
 [[package]]
@@ -501,7 +501,7 @@ requires-dist = [
     { name = "markdown", specifier = "==3.10.2" },
     { name = "pyairtable", specifier = "==3.3.0" },
     { name = "python-slugify", specifier = "==8.0.4" },
-    { name = "tatsu", specifier = "<5.10" },
+    { name = "tatsu", specifier = "<5.18" },
 ]
 
 [[package]]

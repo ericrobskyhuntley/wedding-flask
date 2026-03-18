@@ -16,4 +16,6 @@ build/
 
 */static/*.mp4
 
+node_modules/
+
 .DS_Store

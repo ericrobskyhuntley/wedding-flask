@@ -4,16 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{data['ShortNames'] | join(" & ")}}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Lora:ital@0;1&display=swap" rel="stylesheet">
-    <style> @import url('https://fonts.googleapis.com/css2?family=Lora:ital@0;1&display=swap'); </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="{{ url_for('static', filename='node_modules/maplibre-gl/dist/maplibre-gl.js') }}"></script>
+    <link href="{{ url_for('static', filename='node_modules/maplibre-gl/dist/maplibre-gl.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='node_modules/bulma/css/bulma.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="{{url_for('static',filename='styles.css')}}">
-    <script 
-        src="https://code.jquery.com/jquery-3.6.3.slim.min.js"
-	    integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo="
-		crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
-    <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
 </head>
 <body class="is-family-sans-serif">
     <section id="header" class="section">
@@ -113,16 +107,23 @@
     <div class="background gradient"></div>
 </body>
 <script>
-    $(document).ready(function() {
-    // Check for click events on the navbar burger icon
-    $(".navbar-burger").click(function() {
-        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-        $(".navbar-burger").toggleClass("is-active");
-        $(".navbar-menu").toggleClass("is-active");
+    document.addEventListener('DOMContentLoaded', () => {
+        const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+        
+        navbarBurgers.forEach( el => {
+            el.addEventListener('click', () => {
+                const target = document.querySelector('.navbar-menu');
+                
+                el.classList.toggle('is-active');
+                target.classList.toggle('is-active');
+            });
         });
-    // Hide login modal on click of close button
-    $(".close-modal").click(function() {
-        $(".rsvp").toggleClass("is-active");
+
+        const closeButtons = document.querySelectorAll('.close-modal');
+        closeButtons.forEach( btn => {
+            btn.addEventListener('click', () => {
+                document.querySelector('.rsvp').classList.toggle('is-active');
+            });
         });
     });
 </script>

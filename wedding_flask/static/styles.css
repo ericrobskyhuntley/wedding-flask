@@ -4,10 +4,6 @@ html, body {
     /* background:#A60A3D; */
 }
 
-body {
-    font-family: 'Lora', serif;
-}
-
 hr {
     border: 0;
     border-top: 0.5px solid rgba(166, 10, 61, 1.0);
@@ -107,8 +103,6 @@ hr {
 
 .welcome-message{
     position: absolute;
-    font-family: serif;
-    font-style:italic;
 }
 
 .hover-hidden{

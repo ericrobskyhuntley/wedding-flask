@@ -9,7 +9,7 @@ dependencies = [
     "flask-login==0.6.3",
     "flask-mail==0.10.0",
     "ics==0.7.2",
-    "markdown==3.4.1",
+    "markdown==3.10.2",
     "pyairtable==3.0.1",
     "python-slugify==8.0.4",
     "tatsu<5.10",

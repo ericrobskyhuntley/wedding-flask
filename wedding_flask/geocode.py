@@ -1,10 +1,9 @@
-from app import AT, META
 from geocoder import opencage, mapbox
 import os
-from dotenv import load_dotenv
-load_dotenv()
 
-from utils import address_if_blank
+from .config import AT, META
+
+from .helpers import address_if_blank
 
 def geocode(address, creds={}):
     """

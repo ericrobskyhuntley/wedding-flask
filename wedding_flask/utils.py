@@ -1,8 +1,9 @@
 from flask_mail import Mail, Message
 from flask import render_template
 from functools import partial
-from app import META
 import os
+
+from .config import META
 
 def email_confirm(app, yes , no, recipients):
     mail = Mail(app)
@@ -24,14 +25,3 @@ def email_confirm(app, yes , no, recipients):
     rsvp.html = _("rsvp_conf.html")
     mail.send(rsvp)
     return
-
-def address_if_blank(existing, new_col, new_dict, concat_string = ", "):
-    """
-    concatenates values of a dict based on whether value exists.
-    """
-    if new_col in new_dict:
-        if len(existing) > 0:
-            existing = existing + concat_string + new_dict[new_col]
-        else:
-            existing = new_dict[new_col]
-    return existing

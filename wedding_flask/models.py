@@ -1,7 +1,8 @@
 from flask_login import UserMixin
 from typing import Dict, Optional
 from pyairtable.formulas import match
-from app import AT
+
+from .app import AT
 
 users: Dict[str, "User"] = {}
 

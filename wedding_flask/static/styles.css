@@ -1,3 +1,7 @@
+:root {
+  color-scheme: light !important;
+}
+
 html, body {
     margin:0;
     height:100%;

@@ -8,7 +8,7 @@ This project uses the `uv` package and project manager. [Consult the documentati
 
 ```bash
 uv sync
-uv run --env-file=.env fastapi dev
+uv run --env-file .env flask --app wedding_flask.app run
 ```
 
 You'll need a `.env` file containing connection string parameters and keys for authentication (see [`.env.example`](https://github.com/ericrobskyhuntley/wedding-flask/blob/main/.env.example)).

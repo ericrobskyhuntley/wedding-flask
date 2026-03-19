@@ -4,7 +4,7 @@ Flask application buit to manage RSVPs to my wedding. Handles simple authenticat
 
 ## Setting Up a Local Environment
 
-This project uses the `uv` package and project manager. [Consult the documentation for installation instructions](https://github.com/astral-sh/uv). Then, from the `backend` directory...
+This project uses the `uv` package and project manager. [Consult the documentation for installation instructions](https://github.com/astral-sh/uv). Then, from the root directory...
 
 ```bash
 uv sync

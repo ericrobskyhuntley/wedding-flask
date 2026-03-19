@@ -87,7 +87,7 @@
                                 {% endfor %}
                                 {% endif %}
                                 <hr/>
-                                <a class="button" href="data:text/ics;charset=utf-8,{{event.ics}}" download="{{event.Slug}}.ics">Add to Calendar</a>
+                                <a class="button" href="data:text/calendar;base64,{{ event.ics }}" download="{{ event.Slug }}.ics">Add to Calendar</a>
                             </div>
                         </div>
                         {% endfor %}

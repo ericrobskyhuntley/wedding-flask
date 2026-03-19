@@ -4,6 +4,29 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{data['ShortNames'] | join(" & ")}}</title>
+    <link
+        rel="icon"
+        href="{{ url_for('static', filename='favicon.png') }}"
+        type="image/x-icon"
+        sizes="16x16"
+    />
+    <link
+        rel="icon"
+        href="{{ url_for('static', filename='favicon-32x32.png') }}"
+        type="image/png"
+        sizes="32x32"
+    />
+    <link
+        rel="icon"
+        href="{{ url_for('static', filename='favicon-192x192.png') }}"
+        type="image/png"
+        sizes="192x192"
+    />
+    <link
+        rel="apple-touch-icon"
+        href="{{ url_for('static', filename='favicon-192x192.png') }}"
+        sizes="192x192"
+    />
     <link href="{{ url_for('static', filename='node_modules/maplibre-gl/dist/maplibre-gl.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='node_modules/bulma/css/bulma.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="{{url_for('static',filename='styles.css')}}">

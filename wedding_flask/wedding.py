@@ -6,7 +6,9 @@ from slugify import slugify
 from pyairtable.formulas import match, Field, FIND, OR, EQ
 from itertools import groupby
 from operator import itemgetter
-from ics import Calendar, Event
+from icalendar import Calendar, Event
+from datetime import datetime
+import base64
 
 from .config import AT, META
 from .helpers import dt_parse
@@ -34,67 +36,105 @@ def home():
     )
     return render_template("home.html", data=data)
 
+def normalize_event(raw):
+    f = raw["fields"]
+
+    def first(x):
+        return x[0] if isinstance(x, list) else x
+
+    return {
+        "Name": f.get("Name"),
+        "StartTime": f.get("StartTime"),
+        "EndTime": f.get("EndTime"),
+        "Description": f.get("Description"),
+        "VenueName": first(f.get("VenueName")),
+        "VenueAddress": first(f.get("VenueAddress")),
+        "VenueCity": first(f.get("VenueCity")),
+        "VenueState": first(f.get("VenueState")),
+        "VenuePostal": first(f.get("VenuePostal")),
+        "VenueURL": first(f.get("VenueURL")) if f.get("VenueURL") else None,
+        "Lat": first(f.get("Lat")),
+        "Lng": first(f.get("Lng")),
+        "Artists": f.get("Artists"),
+    }
+
+def enrich_event(e):
+    location = (
+        f"{e['VenueAddress']}, "
+        f"{e['VenueCity']}, "
+        f"{e['VenueState']} {e['VenuePostal']}"
+    )
+
+    return {
+        **e,
+        "StartTime": dt_parse(e["StartTime"]),
+        "EndTime": dt_parse(e["EndTime"]),
+        "Slug": slugify(e["Name"]),
+        "Location": location,
+        "Directions": f"https://www.google.com/maps?saddr=My+Location&daddr={location}",
+        "Description": markdown(e["Description"]) if e.get("Description") else None,
+    }
+
+def build_ics(e):
+    cal = Calendar()
+    names = " & ".join(META["ShortNames"])
+    cal.add('prodid', f"-//{names} Wedding//Event Generator//EN")
+    cal.add('version', '2.0')
+
+    event = Event()
+    event.add('summary', names + ": " + e["Name"])
+    event.add('dtstart', e["StartTime"])
+    event.add('dtend', e["EndTime"])
+    event.add('location', e["Location"])
+
+    if e.get("Description"):
+        event.add('description', e["Description"])
+
+    if META.get("URL"):
+        event.add('url', META["URL"])
+
+    event.add('geo', (float(e["Lat"]), float(e["Lng"])))
+
+    cal.add_component(event)
+
+    return base64.b64encode(
+        cal.to_ical()
+    ).decode("utf-8")
+    
+def process_artists(e):
+    if not e.get("Artists"):
+        return e
+
+    artists = []
+    for artist in e["Artists"]:
+        a = AT["vendors"].get(artist)["fields"]
+        if a.get("Status") == "Confirmed":
+            artists.append({
+                "Website": a.get("Website"),
+                "Name": a.get("Name"),
+                "Role": a.get("Role"),
+            })
+
+    artists = sorted(artists, key=itemgetter("Role"))
+
+    grouped = {}
+    for role, group in groupby(artists, key=itemgetter("Role")):
+        grouped[role] = list(group)
+
+    return {**e, "Artists": grouped}
 
 def process_events(events):
-    d = []
-    for e in events:
-        e = e["fields"]
-        c = Calendar()
-        e_ics = Event()
-        e["VenueName"] = e.get("VenueName")[0]
-        e["VenueAddress"] = e.get("VenueAddress")[0]
-        e["VenueCity"] = e.get("VenueCity")[0]
-        e["VenueState"] = e.get("VenueState")[0]
-        e["VenuePostal"] = e.get("VenuePostal")[0]
-        if "VenueURL" in e:
-            e["VenueURL"] = e.get("VenueURL")[0]
-        else:
-            e["VenueURL"] = None
-        e["Lat"] = e.get("Lat")[0]
-        e["Lng"] = e.get("Lng")[0]
-        e_ics.name = " & ".join(META["ShortNames"]) + ": " + e.get("Name")
-        e_ics.begin = e.get("StartTime")
-        e_ics.end = e.get("EndTime")
-        e_ics.description = e.get("Description")
-        e_ics.url = META.get("URL")
-        e_ics.geo = (e["Lat"], e["Lng"])
-        add = ""
-        add = e.get("VenueAddress")
-        add = add + ", " + e.get("VenueCity")
-        add = add + ", " + e.get("VenueState")
-        add = add + " " + e.get("VenuePostal")
-        e_ics.location = add
-        c.events.add(e_ics)
-        if "Description" in e:
-            e["Description"] = markdown(e["Description"])
-        if "VenueName" not in e:
-            e["VenueName"] = "To be announced!"
-        e["ics"] = c.serialize()
-        e["StartTime"] = dt_parse(e["StartTime"])
-        e["EndTime"] = dt_parse(e["EndTime"])
-        e["Slug"] = slugify(e["Name"])
-        e["Directions"] = "https://www.google.com/maps?saddr=My+Location&daddr=" + add
-        if "Artists" in e:
-            artists = []
-            for artist in e["Artists"]:
-                a = AT["vendors"].get(artist)["fields"]
-                art = {}
-                art["Website"] = a.get("Website")
-                art["Name"] = a.get("Name")
-                art["Role"] = a.get("Role")
-                if "Status" in a:
-                    if a["Status"] == "Confirmed":
-                        artists.append(art)
-            artists = sorted(artists, key=itemgetter("Role"))
-            a_dict = {}
-            for role, artist in groupby(artists, key=itemgetter("Role")):
-                a_dict[role] = list(artist)
-            e["Artists"] = a_dict
-        d.append(e)
+    processed = []
 
-    results = groupby(d, lambda x: x["StartTime"].date())
-    return results
+    for raw in events:
+        e = normalize_event(raw)
+        e = enrich_event(e)
+        e = process_artists(e)
+        e["ics"] = build_ics(e)
 
+        processed.append(e)
+
+    return groupby(processed, lambda x: x["StartTime"].date())
 
 def compose_formula(list, field):
     f = []

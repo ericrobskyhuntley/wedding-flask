@@ -1,0 +1,6 @@
+# Allow all well-behaved bots
+User-agent: *
+Disallow:
+
+# Sitemap location (helps Google find all pages)
+Sitemap: https://wedding.foxhuntley.party/sitemap.xml

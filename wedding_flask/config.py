@@ -34,7 +34,7 @@ META['ThingsToDo'] = AT['thingsToDo'].all()
 for key in ["Cities", "States", "Times"]:
     del META[key]
     
-META['Path'] = 'wedding.home'
+META['Path'] = '/'
 
 if "Published" not in META:
     META["Published"] = False

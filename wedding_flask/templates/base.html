@@ -37,7 +37,7 @@
             <div class="columns is-vcentered">
                 <div class="column is-4 is-offset-4 has-text-centered">
                     <p class="title" {% if not data["Published"] %}style="color:white;"{% endif %}>
-                        <a href="{{ url_for('wedding.home')}}">{{data['ShortNames'] | join(" & ")}}</a>
+                        <a href="/">{{data['ShortNames'] | join(" & ")}}</a>
                     </p>
                     <p class="heading" {% if not data["Published"] %}style="color:white;"{% endif %}>
                         {% for d in data['UniqueDates'] %}
@@ -62,7 +62,7 @@
                     </a>
                 </div>
                 <div class="navbar-menu" id="navMenu">
-                    <a class="navbar-item" href="{{ url_for('wedding.home') }}">Home</a>
+                    <a class="navbar-item" href="/">Home</a>
                     <a class="navbar-item" href="{{ url_for('wedding.rsvp') }}">RSVP</a>
                     <a class="navbar-item" href="{{ url_for('wedding.itinerary') }}">Itinerary</a>
                     <a class="navbar-item" href="{{ url_for('wedding.accommodations') }}">Accommodations</a>

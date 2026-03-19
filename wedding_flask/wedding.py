@@ -1,5 +1,6 @@
-from flask import render_template, request, url_for, redirect, Blueprint, flash
+from flask import render_template, request, url_for, redirect, Blueprint, flash, send_from_directory
 from flask_login import current_user
+from flask_sitemap import Sitemap
 
 from markdown import markdown
 from slugify import slugify
@@ -9,6 +10,7 @@ from operator import itemgetter
 from icalendar import Calendar, Event
 from datetime import datetime
 import base64
+import os
 
 from .config import AT, META
 from .helpers import dt_parse
@@ -21,20 +23,22 @@ wedding = Blueprint(
     "wedding", __name__, template_folder="templates", static_folder="static"
 )
 
+app.config['SITEMAP_INCLUDE_RULES_WITHOUT_PARAMS'] = True
+
+ext = Sitemap(app=app)
 
 @wedding.route("/")
-def home_redirect():
-    return redirect(url_for("wedding.home"))
-
-
-@wedding.route("/home")
-def home():
+def index():
     data = META
     META["Path"] = request.path
     data["LandingText"] = markdown(
         AT["meta"].first(fields=["LandingText"])["fields"]["LandingText"]
     )
     return render_template("home.html", data=data)
+
+@app.route("/robots.txt")
+def robots_txt():
+    return send_from_directory(os.path.join(app.root_path, "static"), "robots.txt")
 
 def normalize_event(raw):
     f = raw["fields"]
@@ -204,7 +208,7 @@ def itinerary():
         else:
             return redirect(url_for("auth.login"))
     else:
-        return redirect(url_for("wedding.home"))
+        return redirect("/")
 
 
 @wedding.route("/qa")
@@ -221,7 +225,7 @@ def qa():
         data["qa"] = d
         return render_template("qa.html", data=data)
     else:
-        return redirect(url_for("wedding.home"))
+        return redirect("/")
 
 
 @wedding.route("/accommodations")
@@ -249,7 +253,7 @@ def accommodations():
         data["acc"] = acc
         return render_template("accommodations.html", data=data)
     else:
-        return redirect(url_for("wedding.home"))
+        return redirect("/")
 
 
 @wedding.route("/colophon")
@@ -262,7 +266,7 @@ def colophon():
         )
         return render_template("colophon.html", data=data)
     else:
-        return redirect(url_for("wedding.home"))
+        return redirect("/")
 
 
 def check_none(field, values, values_dict, none_val=None):
@@ -391,7 +395,7 @@ def rsvp():
                 else:
                     msg = "We recorded your response!"
                 flash(msg)
-                return redirect(url_for("wedding.home"))
+                return redirect("/")
             return render_template("rsvp.html", data=data)
     else:
-        return redirect(url_for("wedding.home"))
+        return redirect("/")

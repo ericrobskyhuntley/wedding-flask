@@ -1,21 +1,23 @@
 from flask import Flask
 from flask_login import LoginManager
+from flask_sitemap import Sitemap
 
 from typing import Optional
-from markdown import markdown
 import os
 
-from .config import AT
-from .models import User
-from .helpers import dt_parse
+from wedding_flask.models import User
+from wedding_flask.helpers import dt_parse
+from wedding_flask import wedding, auth, AT
     
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder="wedding_flask/static",
+    template_folder="wedding_flask/templates"
+    )
+ext = Sitemap(app=app)
 
-from .wedding import wedding as wedding_bp
-app.register_blueprint(wedding_bp)
-
-from .auth import auth as auth_bp
-app.register_blueprint(auth_bp)
+app.register_blueprint(wedding)
+app.register_blueprint(auth)
 
 app.config.update(
     MAIL_SERVER = os.getenv("MAIL_SERVER"),
@@ -25,6 +27,7 @@ app.config.update(
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 )
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config['SITEMAP_INCLUDE_RULES_WITHOUT_PARAMS'] = True
 
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'

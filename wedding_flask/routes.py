@@ -1,31 +1,16 @@
 from flask import render_template, request, url_for, redirect, Blueprint, flash, send_from_directory
-from flask_login import current_user
-from flask_sitemap import Sitemap
+from flask_login import current_user, login_user, logout_user, login_required
 
 from markdown import markdown
-from slugify import slugify
-from pyairtable.formulas import match, Field, FIND, OR, EQ
+from pyairtable.formulas import match, Field, EQ
 from itertools import groupby
-from operator import itemgetter
-from icalendar import Calendar, Event
-from datetime import datetime
-import base64
 import os
 
-from .config import AT, META
-from .helpers import dt_parse
-from .app import app
-from .utils import email_confirm
+from .models import User
+from .helpers import dt_parse, email_confirm, get_meta, process_events, compose_formula, check_form, check_form_list, check_none
+from . import wedding, auth, META, AT
 
 META["Path"] = None
-
-wedding = Blueprint(
-    "wedding", __name__, template_folder="templates", static_folder="static"
-)
-
-app.config['SITEMAP_INCLUDE_RULES_WITHOUT_PARAMS'] = True
-
-ext = Sitemap(app=app)
 
 @wedding.route("/")
 def index():
@@ -36,116 +21,9 @@ def index():
     )
     return render_template("home.html", data=data)
 
-@app.route("/robots.txt")
+@wedding.route("/robots.txt")
 def robots_txt():
-    return send_from_directory(os.path.join(app.root_path, "static"), "robots.txt")
-
-def normalize_event(raw):
-    f = raw["fields"]
-
-    def first(x):
-        return x[0] if isinstance(x, list) else x
-
-    return {
-        "Name": f.get("Name"),
-        "StartTime": f.get("StartTime"),
-        "EndTime": f.get("EndTime"),
-        "Description": f.get("Description"),
-        "VenueName": first(f.get("VenueName")),
-        "VenueAddress": first(f.get("VenueAddress")),
-        "VenueCity": first(f.get("VenueCity")),
-        "VenueState": first(f.get("VenueState")),
-        "VenuePostal": first(f.get("VenuePostal")),
-        "VenueURL": first(f.get("VenueURL")) if f.get("VenueURL") else None,
-        "Lat": first(f.get("Lat")),
-        "Lng": first(f.get("Lng")),
-        "Artists": f.get("Artists"),
-    }
-
-def enrich_event(e):
-    location = (
-        f"{e['VenueAddress']}, "
-        f"{e['VenueCity']}, "
-        f"{e['VenueState']} {e['VenuePostal']}"
-    )
-
-    return {
-        **e,
-        "StartTime": dt_parse(e["StartTime"]),
-        "EndTime": dt_parse(e["EndTime"]),
-        "Slug": slugify(e["Name"]),
-        "Location": location,
-        "Directions": f"https://www.google.com/maps?saddr=My+Location&daddr={location}",
-        "Description": markdown(e["Description"]) if e.get("Description") else None,
-    }
-
-def build_ics(e):
-    cal = Calendar()
-    names = " & ".join(META["ShortNames"])
-    cal.add('prodid', f"-//{names} Wedding//Event Generator//EN")
-    cal.add('version', '2.0')
-
-    event = Event()
-    event.add('summary', names + ": " + e["Name"])
-    event.add('dtstart', e["StartTime"])
-    event.add('dtend', e["EndTime"])
-    event.add('location', e["Location"])
-
-    if e.get("Description"):
-        event.add('description', e["Description"])
-
-    if META.get("URL"):
-        event.add('url', META["URL"])
-
-    event.add('geo', (float(e["Lat"]), float(e["Lng"])))
-
-    cal.add_component(event)
-
-    return base64.b64encode(
-        cal.to_ical()
-    ).decode("utf-8")
-    
-def process_artists(e):
-    if not e.get("Artists"):
-        return e
-
-    artists = []
-    for artist in e["Artists"]:
-        a = AT["vendors"].get(artist)["fields"]
-        if a.get("Status") == "Confirmed":
-            artists.append({
-                "Website": a.get("Website"),
-                "Name": a.get("Name"),
-                "Role": a.get("Role"),
-            })
-
-    artists = sorted(artists, key=itemgetter("Role"))
-
-    grouped = {}
-    for role, group in groupby(artists, key=itemgetter("Role")):
-        grouped[role] = list(group)
-
-    return {**e, "Artists": grouped}
-
-def process_events(events):
-    processed = []
-
-    for raw in events:
-        e = normalize_event(raw)
-        e = enrich_event(e)
-        e = process_artists(e)
-        e["ics"] = build_ics(e)
-
-        processed.append(e)
-
-    return groupby(processed, lambda x: x["StartTime"].date())
-
-def compose_formula(list, field):
-    f = []
-    for term in list:
-        f.append(str(FIND(term, "ARRAYJOIN(" + str(Field(field)) + ")")))
-    f.append(str(EQ(0, Field(field))))
-    return OR(",".join(f))
+    return send_from_directory(os.path.join(wedding.root_path, "static"), "robots.txt")
 
 
 @wedding.route("/itinerary")
@@ -269,40 +147,6 @@ def colophon():
         return redirect("/")
 
 
-def check_none(field, values, values_dict, none_val=None):
-    field_lc = field.lower()
-    field_id = "_".join([field_lc, "id"])
-    values_dict[field_id] = "_".join([field_lc, values_dict["id"]])
-    if field not in values:
-        values_dict[field] = none_val
-    else:
-        values_dict[field] = values[field]
-    return values_dict
-
-
-def check_form_list(field, values, request):
-    field_lc = field.lower()
-    field_id = "_".join([field_lc, "id"])
-    if field_id in values:
-        if values[field_id] in request.form:
-            values[field] = request.form.getlist(values[field_id])
-        else:
-            values[field] = []
-    return values
-
-
-def check_form(field, values, request):
-    field_lc = field.lower()
-    field_id = "_".join([field_lc, "id"])
-    if field_id in values:
-        if values[field_id] in request.form:
-            if request.form[values[field_id]] == "None":
-                values[field] = None
-            else:
-                values[field] = request.form[values[field_id]]
-    return values
-
-
 @wedding.route("/rsvp", methods=["GET", "POST"])
 def rsvp():
     if META["Published"]:
@@ -399,3 +243,35 @@ def rsvp():
             return render_template("rsvp.html", data=data)
     else:
         return redirect("/")
+
+@auth.route('/login', methods = ['GET', 'POST'])
+def login():
+    e = None
+    if request.method == 'POST':
+        name = request.form.get('name')
+        name_prepared = name.replace(" ", "").replace("-", "").lower()
+        if name:
+            person = AT["people"].first(formula = match({"Slug": name_prepared}))
+            if (not person) or ("Party" not in person["fields"]):
+                e = "Name not found. Did you misspell something?"
+            else:
+                user = User.get(person['id'])
+                if user:
+                    logout_user()
+                    login_user(user, remember = True)
+                else:
+                    e = "Something went wrong."
+                return redirect(META["Path"])
+        else:
+            e = "Enter one of your party's names, as it appears on your invitation."
+    return render_template(
+        'login.html', 
+        error = e, 
+        data = META
+        )
+
+@auth.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/')

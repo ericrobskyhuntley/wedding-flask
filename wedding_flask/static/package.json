@@ -1,6 +1,17 @@
 {
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --watch"
+  },
   "dependencies": {
+    "@types/maplibre-gl": "^1.13.2",
     "bulma": "^1.0.4",
-    "maplibre-gl": "^5.20.2"
+    "clean-webpack-plugin": "^4.0.0",
+    "maplibre-gl": "^5.20.2",
+    "source-map-loader": "^5.0.0",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "webpack": "^5.105.4",
+    "webpack-cli": "^7.0.2"
   }
 }

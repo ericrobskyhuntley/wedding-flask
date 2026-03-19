@@ -69,21 +69,13 @@
         </div>
     </div>
 </div>
-<script id = "map_generator">{% for d in data.acc %}
-    const {{d.Slug}} = new maplibregl.Map({
-        container: 'map_{{ d.Slug }}',
-        style: 'https://api.maptiler.com/maps/39c06a26-0b36-4c9a-8467-62e0402dc331/style.json?key=TW5HwRPrq8DTWuAQ0Lmj',
-        center: [{{ d.Lng[0] }}, {{ d.Lat[0] }}],
-        zoom: 14,
-        minZoom: 12,
-        maxZoom: 20,
-        maplibreLogo: true,
-        maxBounds: [[-71.16394, 42.34783], [-71.0354, 42.43428]]
-    });
-    new maplibregl.Marker({
-            color: "#daa520"
-        }).setLngLat([{{ d.Lng[0] }}, {{ d.Lat[0] }}])
-        .addTo({{d.Slug}});
-    {% endfor %}
+<script>
+    const accs = {{ data.acc | tojson }};
+    window.MAPS = accs.map(a => ({
+        Slug: a.Slug,
+        Lat: a.Lat,
+        Lng: a.Lng
+    }));
 </script>
+<script src="{{ url_for('static', filename='js/maps.bundle.js') }}"></script>
 {% endblock %}

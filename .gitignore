@@ -18,4 +18,6 @@ build/
 
 node_modules/
 
+*/static/js/
+
 .DS_Store

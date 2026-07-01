@@ -10,7 +10,7 @@ dependencies = [
     "flask-mail==0.10.0",
     "flask-sitemap>=0.4.0",
     "geocoder>=1.38.1",
-    "icalendar>=7.1.0",
+    "icalendar>=7.2.0",
     "markdown==3.10.2",
     "pyairtable==3.3.0",
     "python-slugify==8.0.4",

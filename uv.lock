@@ -312,7 +312,7 @@ wheels = [
 
 [[package]]
 name = "pyairtable"
-version = "3.3.0"
+version = "3.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "inflection" },
@@ -321,9 +321,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/2c/1d/8a572580e02297cef7ae01053a8b550b7759ea80326cd3231df87b00555b/pyairtable-3.3.0.tar.gz", hash = "sha256:d6d3b77f6feb7a02a84779c2235d37a46605f36030cf20ed99b08bab73108a8c", size = 150168, upload-time = "2025-11-05T20:11:41.435Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/6c/efa2c21036ca2156dad1e0005aec9f50cd2fd2d3d8698c1c008fdcfb5e4e/pyairtable-3.4.2.tar.gz", hash = "sha256:6a9174d43800966660547e07d00736b3a0fdef75b5087b76ee8ba0e809c042ee", size = 154121, upload-time = "2026-07-26T01:43:51.876Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/13/7b/bebb0ebb86353b63740869ed10ac1fef1636ccc6042beb1d8d3956cad02d/pyairtable-3.3.0-py2.py3-none-any.whl", hash = "sha256:38af09c18659918b96539ac4d9730c9656f6ce2088cdff692dd311fa16802acf", size = 101513, upload-time = "2025-11-05T20:11:40.137Z" },
+    { url = "https://files.pythonhosted.org/packages/94/7a/5119063ba9bc557b55991746b4f44618857eeb444dfc44d4014472947666/pyairtable-3.4.2-py2.py3-none-any.whl", hash = "sha256:398231594ec0b1c317d2362f403e5741cf4fa948eb546ddfc8a7cc23c9680223", size = 103973, upload-time = "2026-07-26T01:43:50.405Z" },
 ]
 
 [[package]]
@@ -527,7 +527,7 @@ requires-dist = [
     { name = "geocoder", specifier = ">=1.38.1" },
     { name = "icalendar", specifier = ">=7.1.0" },
     { name = "markdown", specifier = "==3.10.2" },
-    { name = "pyairtable", specifier = "==3.3.0" },
+    { name = "pyairtable", specifier = "==3.4.2" },
     { name = "python-slugify", specifier = "==8.0.4" },
 ]
 

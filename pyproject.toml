@@ -12,6 +12,6 @@ dependencies = [
     "geocoder>=1.38.1",
     "icalendar>=7.1.0",
     "markdown==3.10.2",
-    "pyairtable==3.3.0",
+    "pyairtable==3.4.2",
     "python-slugify==8.0.4",
 ]

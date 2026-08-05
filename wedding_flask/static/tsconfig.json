@@ -4,6 +4,7 @@
     "module": "ESNext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "rootDir": "./ts",
     "outDir": "./js",
     "strict": true,
     "sourceMap": true

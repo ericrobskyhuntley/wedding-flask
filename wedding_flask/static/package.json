@@ -10,7 +10,7 @@
     "maplibre-gl": "^5.24.0",
     "source-map-loader": "^5.0.0",
     "ts-loader": "^9.6.0",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "webpack": "^5.109.2",
     "webpack-cli": "^7.2.2"
   }
